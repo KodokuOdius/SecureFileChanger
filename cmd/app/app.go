@@ -20,7 +20,7 @@ func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("Error init enviroments: %v", err.Error())
+		logrus.Fatalf("Error Init enviroments: %v", err.Error())
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
@@ -32,28 +32,32 @@ func main() {
 	})
 
 	if err != nil {
-		logrus.Fatalf("Error database: %v", err.Error())
+		logrus.Fatalf("Error Init Database: %v", err.Error())
 	}
 
 	repositories := repository.NewRepository(db)
 	services := service.NewService(repositories)
 	handlers := api.NewHandler(services)
 
-	server := new(securefilechanger.Server)
+	server := securefilechanger.NewServer()
 	go func() {
-		logrus.Printf("---- SERVER STARTING ON PORT: %s ----\n", "8080")
 		err := server.Run("8080", handlers.InitRouter())
 		if err != nil {
-			logrus.Printf("ERROR STARTING SERVER: %v", err)
+			logrus.Fatalf("Error Starting server: %v", err)
 		}
 	}()
 
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
 
 	sig := <-sigChan
-	logrus.Printf("Closing now, We've gotten signal: %v", sig)
-	ctx := context.Background()
-	server.ShutDown(ctx)
+	logrus.Warnf("Stop app with sys call: %v", sig)
+
+	if err := server.ShutDown(context.Background()); err != nil {
+		logrus.Errorf("Error while shutdown: %s", err.Error())
+	}
+
+	if err := db.Close(); err != nil {
+		logrus.Errorf("Error while db close: %s", err.Error())
+	}
 }

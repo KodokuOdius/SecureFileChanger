@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Обработчик для операция с документами
+// Загрузка документов
 func (h *Handler) uploadFile(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	err := c.Request.ParseMultipartForm(10 << 20)
@@ -46,7 +48,7 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// Копирование файоа
+	// Копирование файла
 	_, err = io.Copy(file, f)
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
@@ -60,6 +62,7 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	})
 }
 
+// Выгрузка документов
 func (h *Handler) downloadFile(c *gin.Context) {
 	c.Writer.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 

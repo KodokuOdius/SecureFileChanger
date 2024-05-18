@@ -11,17 +11,20 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+// основные константы
 const (
 	salt       = "qp234895yw450otuhwsreolgs"
 	tokenTTL   = 12 * time.Hour
 	signingKey = "q78o423rytq4378rtywo487tghwoi43uythgw3i4oty"
 )
 
+// Структура для токена
 type tokenClaims struct {
 	jwt.StandardClaims
 	UserId int `json:"user_id"`
 }
 
+// Сервис авторизации
 type AuthService struct {
 	repo repository.Authorization
 }
@@ -30,11 +33,13 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
+// Создание пользователя
 func (s *AuthService) CreateUser(user securefilechanger.User) (int, error) {
 	user.Password = hashPassword(user.Password)
 	return s.repo.CreateUser(user)
 }
 
+// Генерация токена
 func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	user, err := s.repo.GetUser(email, hashPassword(password))
 	if err != nil {
@@ -52,6 +57,7 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	return token.SignedString([]byte(signingKey))
 }
 
+// Обработка токена
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {

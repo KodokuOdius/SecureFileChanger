@@ -6,6 +6,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Основные таблицы ЬД
 const (
 	userTable    = "user"
 	fileTable    = "file"
@@ -22,6 +23,7 @@ type Config struct {
 	DBName   string
 }
 
+// Подключение к базе данных
 func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",

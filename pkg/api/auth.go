@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Регистрация
 func (h *Handler) signUp(c *gin.Context) {
 	var input securefilechanger.User
 
@@ -26,11 +27,13 @@ func (h *Handler) signUp(c *gin.Context) {
 	})
 }
 
+// Структура для авторизации
 type sighInInput struct {
-	Email    string `json:"email", binding:"required"`
-	Password string `json:"password", binding:"required"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
+// Авторизация
 func (h *Handler) signIn(c *gin.Context) {
 	var input sighInInput
 

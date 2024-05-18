@@ -7,6 +7,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Репозиторий для авториазции
 type AuthRepository struct {
 	db *sqlx.DB
 }
@@ -30,7 +31,10 @@ func (r *AuthRepository) CreateUser(user securefilechanger.User) (int, error) {
 func (r *AuthRepository) GetUser(email, password string) (securefilechanger.User, error) {
 	var user securefilechanger.User
 	query := fmt.Sprintf("SELECT id FROM \"%s\" WHERE email=$1 and password=$2", userTable)
-	r.db.Get(&user, query, email, password)
+	err := r.db.Get(&user, query, email, password)
 
+	if err != nil || user.Id == 0 {
+		return user, err
+	}
 	return user, nil
 }

@@ -11,6 +11,10 @@ type Server struct {
 	httpServer *http.Server
 }
 
+func NewServer() Server {
+	return Server{httpServer: &http.Server{}}
+}
+
 func (s *Server) Run(port string, handler http.Handler) error {
 	s.httpServer = &http.Server{
 		Addr:         fmt.Sprintf(":%s", port),
