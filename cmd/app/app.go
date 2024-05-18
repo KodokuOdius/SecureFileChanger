@@ -1,50 +1,59 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
+
 	"context"
-	"fmt"
-	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
-	v1 "github.com/KodokuOdius/SecureFileChanger/api/v1"
-	"github.com/gorilla/mux"
-)
-
-const (
-	port = "8080"
+	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
+	"github.com/KodokuOdius/SecureFileChanger/pkg/api"
+	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
+	"github.com/KodokuOdius/SecureFileChanger/pkg/service"
 )
 
 func main() {
-	r := mux.NewRouter()
-	s := r.PathPrefix("/api/v1").Subrouter()
-	s.HandleFunc("/upload", v1.HandleUpload).Methods("POST")
-	s.HandleFunc("/download", v1.HandleDownload).Methods("GET")
-	s.HandleFunc("/user/create", v1.HandleCreateUser).Methods("POST")
+	logrus.SetFormatter(new(logrus.JSONFormatter))
 
-	server := http.Server{
-		Addr:        fmt.Sprintf(":%s", port),
-		Handler:     s,
-		IdleTimeout: 120 * time.Second,
+	if err := godotenv.Load(); err != nil {
+		logrus.Fatalf("Error init enviroments: %v", err.Error())
 	}
 
+	db, err := repository.NewPostgresDB(repository.Config{
+		Host:     "localhost",
+		Port:     "5432",
+		User:     os.Getenv("POSTGRES_USER"),
+		Password: os.Getenv("POSTGRES_PASSWORD"),
+		DBName:   "postgres",
+	})
+
+	if err != nil {
+		logrus.Fatalf("Error database: %v", err.Error())
+	}
+
+	repositories := repository.NewRepository(db)
+	services := service.NewService(repositories)
+	handlers := api.NewHandler(services)
+
+	server := new(securefilechanger.Server)
 	go func() {
-		log.Printf("---- SERVER STARTING ON PORT: %s ----\n", port)
-		err := server.ListenAndServe()
+		logrus.Printf("---- SERVER STARTING ON PORT: %s ----\n", "8080")
+		err := server.Run("8080", handlers.InitRouter())
 		if err != nil {
-			log.Printf("ERROR STARTING SERVER: %v", err)
+			logrus.Printf("ERROR STARTING SERVER: %v", err)
 		}
 	}()
 
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt, os.Kill)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	sig := <-sigChan
-	log.Printf("Closing now, We've gotten signal: %v", sig)
+	logrus.Printf("Closing now, We've gotten signal: %v", sig)
 	ctx := context.Background()
-	server.Shutdown(ctx)
+	server.ShutDown(ctx)
 }
