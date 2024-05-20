@@ -27,20 +27,33 @@ func (h *Handler) InitRouter() *gin.Engine {
 		auth.POST("/sign-in", h.signIn)
 	}
 
+	// h.userApproved
 	api := router.Group("/api", h.userIdentity)
 	{
-		api.POST("/upload", h.uploadFile)
-		api.GET("/download", h.downloadFile)
 		users := api.Group("/user")
 		{
-			users.POST("/create", h.userCreate)
+			users.POST("/disable/:user_id", h.disableUser)
+			users.DELETE("/delete", h.deleteUser)
+			users.PUT("/update", h.updateUser)
+			users.POST("/new-password", h.newPassword)
 		}
+
 		folders := api.Group("folder")
 		{
 			folders.POST("/create", h.createFolder)
 			folders.GET("/all", h.getAllFolders)
-			folders.GET("/:folder_id", h.getFolderById)
+			// Все файл в директории
+			folders.GET("/:folder_id", h.getFilesInFolder)
 			folders.DELETE("/:folder_id", h.deleteFolder)
+			folders.PUT("/update", h.updateFolder)
+		}
+
+		files := api.Group("/file")
+		{
+			files.POST("/create", h.createFile)
+			files.DELETE("/:file_id", h.deleteFile)
+			files.POST("/upload", h.uploadFile)
+			files.GET("/download", h.downloadFile)
 		}
 	}
 

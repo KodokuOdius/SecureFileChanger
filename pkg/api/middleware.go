@@ -40,6 +40,24 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(userCtx, userId)
 }
 
+func (h *Handler) userApproved(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	isApproved, err := h.services.User.IsApproved(userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !isApproved {
+		newErrorMessage(c, http.StatusForbidden, err.Error())
+		return
+	}
+}
+
 // Получения id пользователя из токена
 func getUserId(c *gin.Context) (int, error) {
 	id, ok := c.Get(userCtx)

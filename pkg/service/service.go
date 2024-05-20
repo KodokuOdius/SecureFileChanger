@@ -1,6 +1,8 @@
 package service
 
 import (
+	"io"
+
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
 )
@@ -22,14 +24,35 @@ type Folder interface {
 	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
 }
 
+// Сервис работ с документами
+type File interface {
+	Create(userId int, metaFile securefilechanger.File) (int, error)
+	GetFilesInFolder(userId int, folderId *int) ([]securefilechanger.File, error)
+	Delete(fileId, userId int) error
+	FileEncrypt(fileName string, inputFile io.Reader) (string, error)
+}
+
+type User interface {
+	Update(userId int, input securefilechanger.UpdateUser) error
+	SetDisable(userId int) error
+	Delete(userId int) error
+	NewPassword(userId int, password string) error
+	IsApproved(userId int) (bool, error)
+}
+
+// Структура сервиса
 type Service struct {
 	Authorization
 	Folder
+	File
+	User
 }
 
 func NewService(repos *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization),
 		Folder:        NewFolderService(repos.Folder),
+		File:          NewFileService(repos.File),
+		User:          NewUserService(repos.User),
 	}
 }

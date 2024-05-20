@@ -3,8 +3,12 @@ package securefilechanger
 import "errors"
 
 type File struct {
-	Id   int    `json:"-"`
-	Name string `json:"file_name"`
+	Id        int    `json:"-"`
+	Name      string `json:"file_name"`
+	Path      string `json:"path"`
+	SizeBytes string `json:"size_bytes"`
+	Type      string `json:"type"`
+	FolderId  string `json:"folder_id"`
 }
 
 type Folder struct {

@@ -46,15 +46,15 @@ func (r *FolderRepository) GetAll(userId int) ([]securefilechanger.Folder, error
 // Данные одной директории
 func (r *FolderRepository) GetById(folderId, userId int) (securefilechanger.Folder, error) {
 	var folder securefilechanger.Folder
-	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE user_id=$1 and folder_id=$2", folderTable)
-	err := r.db.Get(&folder, query, userId, folderId)
+	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE folder_id=$1 AND user_id=$2", folderTable)
+	err := r.db.Get(&folder, query, folderId, userId)
 
 	return folder, err
 }
 
 // Удаление директории
 func (r *FolderRepository) Delete(folderId, userId int) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE user_id=$1 and id=$1", folderTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1 AND user_id=$2", folderTable)
 	_, err := r.db.Exec(query, folderId, userId)
 
 	return err
@@ -66,8 +66,8 @@ func (r *FolderRepository) Update(folderId, userId int, input securefilechanger.
 		return nil
 	}
 
-	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE user_id=$2 and id=$3", folderTable)
+	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE id=$2 AND user_id=$3", folderTable)
 
-	_, err := r.db.Exec(query, input.Name, userId, folderId)
+	_, err := r.db.Exec(query, input.Name, folderId, userId)
 	return err
 }

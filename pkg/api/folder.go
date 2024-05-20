@@ -111,6 +111,7 @@ func (h *Handler) deleteFolder(c *gin.Context) {
 	if err != nil {
 		return
 	}
+
 	id, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
 		newErrorMessage(c, http.StatusBadRequest, "Invalid folder id")

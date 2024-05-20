@@ -21,15 +21,35 @@ type Folder interface {
 	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
 }
 
+// Обработчик операций с документами
+type File interface {
+	Create(userId int, metaFile securefilechanger.File) (int, error)
+	GetFilesInFolder(userId int, folderId int) ([]securefilechanger.File, error)
+	Delete(fileId, userId int) error
+}
+
+// Обработчик операций с Сотрудниками
+type User interface {
+	Update(userId int, input securefilechanger.UpdateUser) error
+	SetDisable(userId int) error
+	Delete(userId int) error
+	NewPassword(userId int, password string) error
+	IsApproved(userId int) (bool, error)
+}
+
 // Структура репозитория
 type Repository struct {
 	Authorization
 	Folder
+	File
+	User
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthRepository(db),
 		Folder:        NewFolderRepository(db),
+		File:          NewFileRepository(db),
+		User:          NewUserRepository(db),
 	}
 }
