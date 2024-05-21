@@ -71,3 +71,27 @@ func (r *FolderRepository) Update(folderId, userId int, input securefilechanger.
 	_, err := r.db.Exec(query, input.Name, folderId, userId)
 	return err
 }
+
+// Создание начальных директорий
+func (r *FolderRepository) CreateDefaultFolder(userId int) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	createFolderQuery := fmt.Sprintf("INSERT INTO %s (name, user_id, is_root, is_bin) VALUES ($1, $2, $3, $4) RETURNING id", folderTable)
+
+	_, err = tx.Exec(createFolderQuery, "root", userId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	_, err = tx.Exec(createFolderQuery, "bin", userId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}

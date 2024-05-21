@@ -1,6 +1,10 @@
 package service
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
+
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
 )
@@ -40,4 +44,20 @@ func (s *FolderService) Update(folderId, userId int, input securefilechanger.Upd
 		return err
 	}
 	return s.repo.Update(folderId, userId, input)
+}
+
+// Создание начальных директорий
+func (s *FolderService) CreateDefaultFolder(userId int) error {
+	err := s.repo.CreateDefaultFolder(userId)
+	if err != nil {
+		return err
+	}
+
+	path := filepath.Join(".", fmt.Sprintf("files/user%d/bin", userId))
+	err = os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

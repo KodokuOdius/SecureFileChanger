@@ -19,6 +19,7 @@ type Folder interface {
 	GetById(folderId, userId int) (securefilechanger.Folder, error)
 	Delete(folderId, userId int) error
 	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
+	CreateDefaultFolder(userId int) error
 }
 
 // Обработчик операций с документами

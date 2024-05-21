@@ -1,7 +1,9 @@
 package service
 
 import (
+	"crypto/cipher"
 	"io"
+	"os"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
@@ -22,6 +24,7 @@ type Folder interface {
 	GetById(folderId, userId int) (securefilechanger.Folder, error)
 	Delete(folderId, userId int) error
 	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
+	CreateDefaultFolder(userId int) error
 }
 
 // Сервис работ с документами
@@ -30,6 +33,7 @@ type File interface {
 	GetFilesInFolder(userId int, folderId *int) ([]securefilechanger.File, error)
 	Delete(fileId, userId int) error
 	FileEncrypt(fileName string, inputFile io.Reader) (string, error)
+	FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error)
 }
 
 type User interface {
