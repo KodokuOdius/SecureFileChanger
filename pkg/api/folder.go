@@ -30,7 +30,8 @@ func (h *Handler) createFolder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"folder_id": id,
+		"folder_id":   id,
+		"folder_name": input.Name,
 	})
 }
 
@@ -114,7 +115,7 @@ func (h *Handler) deleteFolder(c *gin.Context) {
 
 	id, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
-		newErrorMessage(c, http.StatusBadRequest, "Invalid folder id")
+		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
 		return
 	}
 

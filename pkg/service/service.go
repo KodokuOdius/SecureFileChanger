@@ -22,9 +22,11 @@ type Folder interface {
 	Create(userId int, folder securefilechanger.Folder) (int, error)
 	GetAll(userId int) ([]securefilechanger.Folder, error)
 	GetById(folderId, userId int) (securefilechanger.Folder, error)
+	GetByName(folderName string, userId int) (int, error)
 	Delete(folderId, userId int) error
 	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
-	CreateDefaultFolder(userId int) error
+	GetRoot(userId int) (int, error)
+	GetBin(userId int) (int, error)
 }
 
 // Сервис работ с документами
@@ -34,6 +36,8 @@ type File interface {
 	Delete(fileId, userId int) error
 	FileEncrypt(fileName string, inputFile io.Reader) (string, error)
 	FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error)
+	GetByName(fileName string, folderId, userId int) (int, error)
+	GetById(fileId int) (securefilechanger.File, error)
 }
 
 type User interface {

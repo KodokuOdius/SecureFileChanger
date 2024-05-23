@@ -3,6 +3,7 @@ package service
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"errors"
 	"io"
 	"os"
 	"strings"
@@ -23,7 +24,24 @@ func NewFileService(repo repository.File) *FileService {
 
 // Создание нового документа
 func (s *FileService) Create(userId int, metaFile securefilechanger.File) (int, error) {
+	fileId, err := s.GetByName(metaFile.Name, metaFile.FolderId, userId)
+	if fileId != 0 {
+		return 0, errors.New("file already exists")
+	}
+
+	if err != nil {
+		return 0, err
+	}
+
 	return s.repo.Create(userId, metaFile)
+}
+
+func (s *FileService) GetById(fileId int) (securefilechanger.File, error) {
+	return s.repo.GetById(fileId)
+}
+
+func (s *FileService) GetByName(fileName string, folderId, userId int) (int, error) {
+	return s.repo.GetByName(fileName, folderId, userId)
 }
 
 // Список документов в директории
@@ -37,7 +55,7 @@ func (s *FileService) Delete(fileId, userId int) error {
 }
 
 func (s *FileService) FileEncrypt(fileName string, inputFile io.Reader) (string, error) {
-	logrus.Info("[FileEncrypt] encrypte file", fileName)
+	logrus.Info("[FileEncrypt] encrypte file ", fileName)
 
 	encfileName := fileName + ".enc"
 
@@ -72,7 +90,7 @@ func (s *FileService) FileEncrypt(fileName string, inputFile io.Reader) (string,
 
 func (s *FileService) FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error) {
 	decfileName := strings.ReplaceAll(encfileName, ".enc", "")
-	logrus.Info("[FileDecryption] dencrypte file", decfileName)
+	logrus.Info("[FileDecryption] dencrypte file ", decfileName)
 
 	// Открытие исходного файла (защифрованный)
 	srcFile, err := os.Open(encfileName)

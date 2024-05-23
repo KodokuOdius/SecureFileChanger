@@ -1,9 +1,7 @@
 package service
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
+	"errors"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
@@ -20,7 +18,20 @@ func NewFolderService(repo repository.Folder) *FolderService {
 
 // Создание новой директории
 func (s *FolderService) Create(userId int, folder securefilechanger.Folder) (int, error) {
+	folderId, err := s.GetByName(folder.Name, userId)
+	if folderId != 0 {
+		return 0, errors.New("folder already exists")
+	}
+
+	if err != nil {
+		return 0, err
+	}
+
 	return s.repo.Create(userId, folder)
+}
+
+func (s *FolderService) GetByName(folderName string, userId int) (int, error) {
+	return s.repo.GetByName(folderName, userId)
 }
 
 // Список директорий
@@ -30,7 +41,23 @@ func (s *FolderService) GetAll(userId int) ([]securefilechanger.Folder, error) {
 
 // Данные директории
 func (s *FolderService) GetById(folderId, userId int) (securefilechanger.Folder, error) {
-	return s.repo.GetById(folderId, userId)
+	folder, err := s.repo.GetById(folderId, userId)
+
+	if folder.Id == 0 {
+		return folder, errors.New("folder not found")
+	}
+
+	return folder, err
+}
+
+// id корневой директории
+func (s *FolderService) GetRoot(userId int) (int, error) {
+	return s.repo.GetRoot(userId)
+}
+
+// id корзины
+func (s *FolderService) GetBin(userId int) (int, error) {
+	return s.repo.GetBin(userId)
 }
 
 // Удаление директории
@@ -44,20 +71,4 @@ func (s *FolderService) Update(folderId, userId int, input securefilechanger.Upd
 		return err
 	}
 	return s.repo.Update(folderId, userId, input)
-}
-
-// Создание начальных директорий
-func (s *FolderService) CreateDefaultFolder(userId int) error {
-	err := s.repo.CreateDefaultFolder(userId)
-	if err != nil {
-		return err
-	}
-
-	path := filepath.Join(".", fmt.Sprintf("files/user%d/bin", userId))
-	err = os.MkdirAll(path, os.ModePerm)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

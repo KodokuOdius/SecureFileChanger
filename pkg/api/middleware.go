@@ -2,10 +2,12 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -38,6 +40,14 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+}
+
+// middlware для логгирования запросов
+func (h *Handler) logMiddleware(c *gin.Context) {
+	method := c.Request.Method
+	url := c.Request.URL
+
+	logrus.Infoln(fmt.Sprintf("[%s] %s", method, url))
 }
 
 func (h *Handler) userApproved(c *gin.Context) {

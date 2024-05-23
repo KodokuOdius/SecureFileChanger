@@ -5,6 +5,7 @@ import (
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 // Регистрация
@@ -19,13 +20,7 @@ func (h *Handler) signUp(c *gin.Context) {
 	// Create user
 	id, err := h.services.Authorization.CreateUser(input)
 	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	// Create default bin
-	err = h.services.Folder.CreateDefaultFolder(id)
-	if err != nil {
+		logrus.Infoln("[CreateUser]")
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}

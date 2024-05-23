@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
@@ -46,10 +47,44 @@ func (r *FolderRepository) GetAll(userId int) ([]securefilechanger.Folder, error
 // Данные одной директории
 func (r *FolderRepository) GetById(folderId, userId int) (securefilechanger.Folder, error) {
 	var folder securefilechanger.Folder
-	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE folder_id=$1 AND user_id=$2", folderTable)
+	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE id=$1 AND user_id=$2", folderTable)
 	err := r.db.Get(&folder, query, folderId, userId)
 
+	if err == sql.ErrNoRows {
+		return folder, nil
+	}
+
 	return folder, err
+}
+
+func (r *FolderRepository) GetByName(folderName string, userId int) (int, error) {
+	var id int
+	query := fmt.Sprintf("SELECT id FROM %s WHERE user_id=$1 AND name=$2", folderTable)
+	err := r.db.Get(&id, query, userId, folderName)
+
+	if err == sql.ErrNoRows {
+		return id, nil
+	}
+
+	return id, err
+}
+
+// id корневой директории
+func (r *FolderRepository) GetRoot(userId int) (int, error) {
+	var id int
+	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND name='root'", folderTable)
+	err := r.db.Get(&id, query, userId)
+
+	return id, err
+}
+
+// id корзины
+func (r *FolderRepository) GetBin(userId int) (int, error) {
+	var id int
+	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND name='bin'", folderTable)
+	err := r.db.Get(&id, query, userId)
+
+	return id, err
 }
 
 // Удаление директории
@@ -70,28 +105,4 @@ func (r *FolderRepository) Update(folderId, userId int, input securefilechanger.
 
 	_, err := r.db.Exec(query, input.Name, folderId, userId)
 	return err
-}
-
-// Создание начальных директорий
-func (r *FolderRepository) CreateDefaultFolder(userId int) error {
-	tx, err := r.db.Begin()
-	if err != nil {
-		return err
-	}
-
-	createFolderQuery := fmt.Sprintf("INSERT INTO %s (name, user_id, is_root, is_bin) VALUES ($1, $2, $3, $4) RETURNING id", folderTable)
-
-	_, err = tx.Exec(createFolderQuery, "root", userId)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	_, err = tx.Exec(createFolderQuery, "bin", userId)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	return tx.Commit()
 }

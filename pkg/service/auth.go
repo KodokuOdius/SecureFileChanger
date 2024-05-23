@@ -4,6 +4,8 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"time"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
@@ -36,7 +38,19 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 // Создание пользователя
 func (s *AuthService) CreateUser(user securefilechanger.User) (int, error) {
 	user.Password = hashPassword(user.Password)
-	return s.repo.CreateUser(user)
+
+	userId, err := s.repo.CreateUser(user)
+	if err != nil || userId == 0 {
+		return 0, err
+	}
+
+	path := filepath.Join(".", fmt.Sprintf("files/user%d/bin", userId))
+	err = os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return 0, err
+	}
+
+	return userId, err
 }
 
 // Генерация токена

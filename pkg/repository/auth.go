@@ -17,15 +17,35 @@ func NewAuthRepository(db *sqlx.DB) *AuthRepository {
 }
 
 func (r *AuthRepository) CreateUser(user securefilechanger.User) (int, error) {
-	var id int
-	query := fmt.Sprintf("INSERT INTO \"%s\" (email, password, is_admin) values ($1, $2, true) RETURNING id", userTable)
-	row := r.db.QueryRow(query, user.Email, user.Password)
-
-	if err := row.Scan(&id); err != nil {
+	tx, err := r.db.Begin()
+	if err != nil {
+		tx.Rollback()
 		return 0, err
 	}
 
-	return id, nil
+	var userId int
+	query := fmt.Sprintf("INSERT INTO \"%s\" (email, password, is_admin) values ($1, $2, true) RETURNING id", userTable)
+	row := r.db.QueryRow(query, user.Email, user.Password)
+
+	if err := row.Scan(&userId); err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	createFolderQuery := fmt.Sprintf("INSERT INTO %s (name, user_id, is_root, is_bin) VALUES ($1, $2, $3, $4) RETURNING id", folderTable)
+	_, err = tx.Exec(createFolderQuery, "root", userId, true, false)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	_, err = tx.Exec(createFolderQuery, "bin", userId, false, true)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+
+	return userId, tx.Commit()
 }
 
 func (r *AuthRepository) GetUser(email, password string) (securefilechanger.User, error) {
