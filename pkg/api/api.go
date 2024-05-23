@@ -51,10 +51,11 @@ func (h *Handler) InitRouter() *gin.Engine {
 
 		files := api.Group("/file", h.userIdentity)
 		{
-			files.DELETE("/:file_id", h.deleteFile)
 			// create file
 			files.POST("/upload", h.uploadFile)
 			files.GET("/download/:file_id", h.downloadFile)
+			files.DELETE("/:file_id", h.deleteFile)
+			files.POST("/to-bin/:file_id", h.toBinFile)
 		}
 	}
 

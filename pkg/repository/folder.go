@@ -72,7 +72,7 @@ func (r *FolderRepository) GetByName(folderName string, userId int) (int, error)
 // id корневой директории
 func (r *FolderRepository) GetRoot(userId int) (int, error) {
 	var id int
-	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND name='root'", folderTable)
+	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND is_root", folderTable)
 	err := r.db.Get(&id, query, userId)
 
 	return id, err
@@ -81,7 +81,7 @@ func (r *FolderRepository) GetRoot(userId int) (int, error) {
 // id корзины
 func (r *FolderRepository) GetBin(userId int) (int, error) {
 	var id int
-	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND name='bin'", folderTable)
+	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND is_bin", folderTable)
 	err := r.db.Get(&id, query, userId)
 
 	return id, err

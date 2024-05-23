@@ -4,8 +4,10 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"errors"
+	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
@@ -36,8 +38,8 @@ func (s *FileService) Create(userId int, metaFile securefilechanger.File) (int, 
 	return s.repo.Create(userId, metaFile)
 }
 
-func (s *FileService) GetById(fileId int) (securefilechanger.File, error) {
-	return s.repo.GetById(fileId)
+func (s *FileService) GetById(fileId, userId int) (securefilechanger.File, error) {
+	return s.repo.GetById(fileId, userId)
 }
 
 func (s *FileService) GetByName(fileName string, folderId, userId int) (int, error) {
@@ -51,7 +53,18 @@ func (s *FileService) GetFilesInFolder(userId int, folderId *int) ([]securefilec
 
 // Удаление документа
 func (s *FileService) Delete(fileId, userId int) error {
-	return s.repo.Delete(fileId, userId)
+	file, err := s.repo.GetById(fileId, userId)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.Delete(fileId, userId)
+	if err != nil {
+		return err
+	}
+
+	fullPath := filepath.Join(file.Path, fmt.Sprintf("/document%d.enc", fileId))
+	return os.Remove(fullPath)
 }
 
 func (s *FileService) FileEncrypt(fileName string, inputFile io.Reader) (string, error) {

@@ -27,8 +27,7 @@ func (h *Handler) getFilesInFolder(c *gin.Context) {
 
 	folderId, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
-		logrus.Infoln("[Atoi]")
-		newErrorMessage(c, http.StatusInternalServerError, "invalid param: folder_id")
+		newErrorMessage(c, http.StatusInternalServerError, "invalid folder id")
 		return
 	}
 
@@ -44,6 +43,30 @@ func (h *Handler) getFilesInFolder(c *gin.Context) {
 
 // Удаление документа
 func (h *Handler) deleteFile(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	fileId, err := strconv.Atoi(c.Param("file_id"))
+	if err != nil {
+		newErrorMessage(c, http.StatusBadRequest, "invalid file id")
+		return
+	}
+
+	err = h.services.File.Delete(fileId, userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponce{
+		Status: "ok",
+	})
+}
+
+// Перемещение в корзину
+func (h *Handler) toBinFile(c *gin.Context) {
 }
 
 // Загрузка документов
@@ -142,7 +165,7 @@ func (h *Handler) uploadFile(c *gin.Context) {
 
 // Выгрузка документов
 func (h *Handler) downloadFile(c *gin.Context) {
-	_, err := getUserId(c)
+	userId, err := getUserId(c)
 	if err != nil {
 		return
 	}
@@ -155,7 +178,7 @@ func (h *Handler) downloadFile(c *gin.Context) {
 		return
 	}
 
-	file, err := h.services.File.GetById(fileId)
+	file, err := h.services.File.GetById(fileId, userId)
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return

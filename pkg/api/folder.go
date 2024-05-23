@@ -113,13 +113,13 @@ func (h *Handler) deleteFolder(c *gin.Context) {
 		return
 	}
 
-	id, err := strconv.Atoi(c.Param("folder_id"))
+	folderId, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
 		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
 		return
 	}
 
-	err = h.services.Folder.Delete(id, userId)
+	err = h.services.Folder.Delete(folderId, userId)
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return

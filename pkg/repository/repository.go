@@ -30,7 +30,7 @@ type File interface {
 	GetFilesInFolder(userId int, folderId int) ([]securefilechanger.File, error)
 	Delete(fileId, userId int) error
 	GetByName(fileName string, folderId, userId int) (int, error)
-	GetById(fileId int) (securefilechanger.File, error)
+	GetById(fileId, userId int) (securefilechanger.File, error)
 }
 
 // Обработчик операций с Сотрудниками

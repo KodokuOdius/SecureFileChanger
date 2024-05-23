@@ -31,10 +31,10 @@ func (r *FileRepository) Create(userId int, metaFile securefilechanger.File) (in
 	return id, nil
 }
 
-func (r *FileRepository) GetById(fileId int) (securefilechanger.File, error) {
+func (r *FileRepository) GetById(fileId, userId int) (securefilechanger.File, error) {
 	var file securefilechanger.File
-	query := fmt.Sprintf("SELECT id, name, path, size_bytes, type, folder_id FROM %s WHERE id=$1", fileTable)
-	err := r.db.Get(&file, query, fileId)
+	query := fmt.Sprintf("SELECT id, name, path, size_bytes, type, folder_id FROM %s WHERE id=$1 AND user_id=$2", fileTable)
+	err := r.db.Get(&file, query, fileId, userId)
 
 	if err == sql.ErrNoRows {
 		return file, errors.New("file not found")
