@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
-	"strconv"
+	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,25 +26,11 @@ func (h *Handler) deleteUser(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusOK, "/sing-up")
-}
+	c.JSON(http.StatusMovedPermanently, map[string]interface{}{"redirect": "/api/auth/register"})
 
-func (h *Handler) disableUser(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("user_id"))
-	if err != nil {
-		newErrorMessage(c, http.StatusBadRequest, "Invalid user id")
-		return
-	}
+	path := filepath.Join(".", fmt.Sprintf("files/user%d", userId))
 
-	err = h.services.User.SetDisable(id)
-	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, statusResponce{
-		Status: "ok",
-	})
+	os.RemoveAll(path)
 }
 
 func (h *Handler) newPassword(c *gin.Context) {

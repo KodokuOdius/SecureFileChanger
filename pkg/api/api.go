@@ -18,28 +18,27 @@ func (h *Handler) InitRouter() *gin.Engine {
 	// gin.SetMode(gin.ReleaseMode)
 	router := gin.New()
 
-	// h.userApproved
-	//
-	api := router.Group("/api", h.logMiddleware)
+	router.Use(h.logMiddleware)
+	api := router.Group("/api")
 	{
+		api.GET("/admin-exists", h.adminExist)
+
 		// Группы роутеров
-		auth := router.Group("/auth")
+		auth := api.Group("/auth")
 		{
 			// endpoints группы
-			// /auth/sign-up
-			auth.POST("/sign-up", h.signUp)
-			auth.POST("/sign-in", h.signIn)
+			auth.POST("/register", h.register)
+			auth.POST("/login", h.logIn)
 		}
 
-		users := api.Group("/user", h.userIdentity)
+		users := api.Group("/user", h.userIdentity, h.userCheckApprove)
 		{
-			users.POST("/disable/:user_id", h.disableUser)
 			users.DELETE("/delete", h.deleteUser)
 			users.PUT("/update", h.updateUser)
 			users.POST("/new-password", h.newPassword)
 		}
 
-		folders := api.Group("/folder", h.userIdentity)
+		folders := api.Group("/folder", h.userIdentity, h.userCheckApprove)
 		{
 			folders.POST("/create", h.createFolder)
 			folders.GET("/all", h.getAllFolders)
@@ -49,13 +48,19 @@ func (h *Handler) InitRouter() *gin.Engine {
 			folders.PUT("/update", h.updateFolder)
 		}
 
-		files := api.Group("/file", h.userIdentity)
+		files := api.Group("/file", h.userIdentity, h.userCheckApprove)
 		{
 			// create file
 			files.POST("/upload", h.uploadFile)
 			files.GET("/download/:file_id", h.downloadFile)
 			files.DELETE("/:file_id", h.deleteFile)
 			files.POST("/to-bin/:file_id", h.toBinFile)
+		}
+
+		admin := api.Group("/admin", h.userIdentity, h.adminIdentify)
+		{
+			admin.GET("/user-list", h.userList)
+			admin.PUT("/toggle-approve/:user_id", h.toggleUserApprove)
 		}
 	}
 

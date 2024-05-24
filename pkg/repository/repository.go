@@ -10,6 +10,7 @@ import (
 type Authorization interface {
 	CreateUser(user securefilechanger.User) (int, error)
 	GetUser(email, password string) (securefilechanger.User, error)
+	CheckAdminIsExists() (bool, error)
 }
 
 // Обработчик операций с директориями
@@ -36,10 +37,13 @@ type File interface {
 // Обработчик операций с Сотрудниками
 type User interface {
 	Update(userId int, input securefilechanger.UpdateUser) error
-	SetDisable(userId int) error
 	Delete(userId int) error
 	NewPassword(userId int, password string) error
 	IsApproved(userId int) (bool, error)
+	IsAdmin(userId int) (bool, error)
+	GetAll(adminId int) ([]securefilechanger.User, error)
+	SetApprove(userId int) error
+	SetDisable(userId int) error
 }
 
 // Структура репозитория

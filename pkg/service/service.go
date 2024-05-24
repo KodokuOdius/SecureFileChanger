@@ -15,6 +15,7 @@ type Authorization interface {
 	CreateUser(user securefilechanger.User) (int, error)
 	GenerateToken(email, password string) (string, error)
 	ParseToken(token string) (int, error)
+	CheckAdminIsExists() (bool, error)
 }
 
 // Сервис работ с директориями
@@ -42,10 +43,12 @@ type File interface {
 
 type User interface {
 	Update(userId int, input securefilechanger.UpdateUser) error
-	SetDisable(userId int) error
+	ToggleApprove(userId int) error
 	Delete(userId int) error
 	NewPassword(userId int, password string) error
 	IsApproved(userId int) (bool, error)
+	IsAdmin(userId int) (bool, error)
+	GetAll(adminId int) ([]securefilechanger.User, error)
 }
 
 // Структура сервиса

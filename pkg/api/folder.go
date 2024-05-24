@@ -73,9 +73,7 @@ func (h *Handler) getAllFolders(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllFolders{
-		Data: folders,
-	})
+	c.JSON(http.StatusOK, getAllFolders{Data: folders})
 }
 
 // Изменение имени директории

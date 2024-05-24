@@ -20,14 +20,14 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	// Проверка на наличие заголовков
 	header := c.GetHeader(authHeader)
 	if header == "" {
-		newErrorMessage(c, http.StatusUnauthorized, "Empty header")
+		newErrorMessage(c, http.StatusUnauthorized, "empty header")
 		return
 	}
 
 	// Проверка на корректность заголовков
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 {
-		newErrorMessage(c, http.StatusUnauthorized, "Invalid auth header")
+		newErrorMessage(c, http.StatusUnauthorized, "invalid auth header")
 		return
 	}
 	token := headerParts[1]
@@ -48,11 +48,14 @@ func (h *Handler) logMiddleware(c *gin.Context) {
 	url := c.Request.URL
 
 	logrus.Infoln(fmt.Sprintf("[%s] %s", method, url))
+
+	c.Next()
 }
 
-func (h *Handler) userApproved(c *gin.Context) {
+func (h *Handler) userCheckApprove(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
+		newErrorMessage(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
@@ -63,7 +66,26 @@ func (h *Handler) userApproved(c *gin.Context) {
 	}
 
 	if !isApproved {
-		newErrorMessage(c, http.StatusForbidden, err.Error())
+		newErrorMessage(c, http.StatusForbidden, "user not approved")
+		return
+	}
+}
+
+func (h *Handler) adminIdentify(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newErrorMessage(c, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	isAdmin, err := h.services.User.IsAdmin(userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if !isAdmin {
+		newErrorMessage(c, http.StatusForbidden, "user not admin")
 		return
 	}
 }

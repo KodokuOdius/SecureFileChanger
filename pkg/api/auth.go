@@ -9,7 +9,7 @@ import (
 )
 
 // Регистрация
-func (h *Handler) signUp(c *gin.Context) {
+func (h *Handler) register(c *gin.Context) {
 	var input securefilechanger.User
 
 	if err := c.BindJSON(&input); err != nil {
@@ -37,7 +37,7 @@ type sighInInput struct {
 }
 
 // Авторизация
-func (h *Handler) signIn(c *gin.Context) {
+func (h *Handler) logIn(c *gin.Context) {
 	var input sighInInput
 
 	if err := c.BindJSON(&input); err != nil {
@@ -47,7 +47,7 @@ func (h *Handler) signIn(c *gin.Context) {
 
 	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
 	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		newErrorMessage(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 

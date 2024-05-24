@@ -39,8 +39,18 @@ func NewAuthService(repo repository.Authorization) *AuthService {
 func (s *AuthService) CreateUser(user securefilechanger.User) (int, error) {
 	user.Password = hashPassword(user.Password)
 
+	adminExist, err := s.repo.CheckAdminIsExists()
+	if err != nil {
+		return 0, nil
+	}
+
+	if !adminExist {
+		user.IsAdmin = true
+		user.IsApproved = true
+	}
+
 	userId, err := s.repo.CreateUser(user)
-	if err != nil || userId == 0 {
+	if err != nil {
 		return 0, err
 	}
 
@@ -53,11 +63,24 @@ func (s *AuthService) CreateUser(user securefilechanger.User) (int, error) {
 	return userId, err
 }
 
+func (s *AuthService) CheckAdminIsExists() (bool, error) {
+	adminExist, err := s.repo.CheckAdminIsExists()
+	if err != nil {
+		return adminExist, err
+	}
+
+	return adminExist, nil
+}
+
 // Генерация токена
 func (s *AuthService) GenerateToken(email, password string) (string, error) {
 	user, err := s.repo.GetUser(email, hashPassword(password))
 	if err != nil {
 		return "", err
+	}
+
+	if !user.IsApproved {
+		return "", errors.New("user not approved")
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{

@@ -3,11 +3,13 @@ package securefilechanger
 import "errors"
 
 type User struct {
-	Id         int    `json:"-" db:"id"`
-	Email      string `json:"email" binding:"required"`
-	Password   string `json:"password" binding:"required"`
-	IsAdmin    bool   `json:"is_admin" db:"is_admin"`
-	IsApproved bool   `json:"is_approved" db:"is_approved"`
+	Id         int     `json:"id" db:"id"`
+	Email      string  `json:"email" binding:"required" db:"email"`
+	Password   string  `json:"password" binding:"required"`
+	Name       *string `json:"user_name" db:"name"`
+	SurName    *string `json:"user_surname" db:"surname"`
+	IsAdmin    bool    `json:"is_admin" db:"is_admin"`
+	IsApproved bool    `json:"is_approved" db:"is_approved"`
 }
 
 type UpdateUser struct {

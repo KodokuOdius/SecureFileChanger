@@ -18,8 +18,17 @@ func (s *UserService) Update(userId int, input securefilechanger.UpdateUser) err
 	return s.repo.Update(userId, input)
 }
 
-func (s *UserService) SetDisable(userId int) error {
-	return s.repo.SetDisable(userId)
+func (s *UserService) ToggleApprove(userId int) error {
+	isApproved, err := s.repo.IsApproved(userId)
+	if err != nil {
+		return err
+	}
+
+	if isApproved {
+		return s.repo.SetDisable(userId)
+	}
+
+	return s.repo.SetApprove(userId)
 }
 
 func (s *UserService) Delete(userId int) error {
@@ -32,4 +41,12 @@ func (s *UserService) NewPassword(userId int, password string) error {
 
 func (s *UserService) IsApproved(userId int) (bool, error) {
 	return s.repo.IsApproved(userId)
+}
+
+func (s *UserService) IsAdmin(userId int) (bool, error) {
+	return s.repo.IsAdmin(userId)
+}
+
+func (s *UserService) GetAll(adminId int) ([]securefilechanger.User, error) {
+	return s.repo.GetAll(adminId)
 }
