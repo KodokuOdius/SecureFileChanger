@@ -55,7 +55,6 @@ func (h *Handler) logMiddleware(c *gin.Context) {
 func (h *Handler) userCheckApprove(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorMessage(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
@@ -74,7 +73,6 @@ func (h *Handler) userCheckApprove(c *gin.Context) {
 func (h *Handler) adminIdentify(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
-		newErrorMessage(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
@@ -94,7 +92,7 @@ func (h *Handler) adminIdentify(c *gin.Context) {
 func getUserId(c *gin.Context) (int, error) {
 	id, ok := c.Get(userCtx)
 	if !ok {
-		newErrorMessage(c, http.StatusInternalServerError, "user id not found")
+		newErrorMessage(c, http.StatusUnauthorized, "user id not found")
 		return 0, errors.New("user id not found")
 	}
 

@@ -15,7 +15,7 @@ import (
 )
 
 // Список документов в директории
-type getAllFiles struct {
+type filesList struct {
 	Data []securefilechanger.File `json:"data"`
 }
 
@@ -38,7 +38,7 @@ func (h *Handler) getFilesInFolder(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllFiles{Data: files})
+	c.JSON(http.StatusOK, filesList{Data: files})
 }
 
 // Удаление документа

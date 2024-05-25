@@ -28,12 +28,13 @@ create table if not exists "file" (
 
 create table if not exists "upload_url" (
     id        serial primary key unique,
-    hex       varchar(10) not null,
+    uuid      varchar(36) not null,
     hour_live integer default 0 not null
+    create_dt timestamp default now() not null
 );
 
 create table if not exists "file_url" (
     id      serial primary key unique,
-    file_id integer references "file"(id) not null,
-    url_id  integer references "upload_url"(id) not null
+    file_id integer references "file"(id) on DELETE CASCADE not null,
+    url_id  integer references "upload_url"(id) on DELETE CASCADE not null
 );

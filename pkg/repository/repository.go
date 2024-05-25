@@ -46,12 +46,22 @@ type User interface {
 	SetDisable(userId int) error
 }
 
+// Обработчик операций с временными ссылками
+type Url interface {
+	CreateUrl(userId int, url securefilechanger.Url, filesIds []int) error
+	CheckFileIds(userId int, fileIds []int) ([]int, error)
+	GetByUUid(uuid string) (securefilechanger.Url, error)
+	GetFilesByUrlUUid(uuid string) ([]securefilechanger.File, error)
+	DeleteUrl(uuid string) error
+}
+
 // Структура репозитория
 type Repository struct {
 	Authorization
 	Folder
 	File
 	User
+	Url
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -60,5 +70,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Folder:        NewFolderRepository(db),
 		File:          NewFileRepository(db),
 		User:          NewUserRepository(db),
+		Url:           NewUrlRepository(db),
 	}
 }

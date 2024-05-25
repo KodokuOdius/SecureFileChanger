@@ -98,7 +98,7 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invelid signing method")
+			return nil, errors.New("invalid signing method")
 		}
 		return []byte(signingKey), nil
 	})
@@ -108,7 +108,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	}
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token invelid")
+		return 0, errors.New("token invalid")
 	}
 
 	return claims.UserId, nil

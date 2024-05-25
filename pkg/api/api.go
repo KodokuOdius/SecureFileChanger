@@ -62,6 +62,17 @@ func (h *Handler) InitRouter() *gin.Engine {
 			admin.GET("/user-list", h.userList)
 			admin.PUT("/toggle-approve/:user_id", h.toggleUserApprove)
 		}
+
+		fileUrl := api.Group("/url", h.userIdentity, h.userCheckApprove)
+		{
+			fileUrl.POST("/create", h.createUrl)
+			fileUrl.GET("/download/:uuid", h.downloadFilesUUid)
+		}
+
+		urlGet := api.Group("/url-get")
+		{
+			urlGet.GET("/files/:uuid", h.getFilesUUid)
+		}
 	}
 
 	return router

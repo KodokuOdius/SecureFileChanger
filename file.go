@@ -3,12 +3,16 @@ package securefilechanger
 import "errors"
 
 type File struct {
-	Id        int    `json:"-" db:"id"`
+	Id        int    `json:"file_id" db:"id"`
 	Name      string `json:"file_name" db:"name"`
-	Path      string `json:"path" db:"path"`
+	Path      string `json:"-" db:"path"`
 	SizeBytes int    `json:"size_bytes" db:"size_bytes"`
-	Type      string `json:"type" db:"type"`
-	FolderId  int    `json:"folder_id" db:"folder_id"`
+	Type      string `json:"file_type" db:"type"`
+	FolderId  int    `json:"-" db:"folder_id"`
+}
+
+type UpdateFile struct {
+	Name *string `json:"file_name"`
 }
 
 type Folder struct {

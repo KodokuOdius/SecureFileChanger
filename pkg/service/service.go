@@ -41,6 +41,7 @@ type File interface {
 	GetById(fileId, userId int) (securefilechanger.File, error)
 }
 
+// Сервис работ с Сотрудниками
 type User interface {
 	Update(userId int, input securefilechanger.UpdateUser) error
 	ToggleApprove(userId int) error
@@ -51,12 +52,21 @@ type User interface {
 	GetAll(adminId int) ([]securefilechanger.User, error)
 }
 
+// Сервис работ с временными ссылками
+type Url interface {
+	CreateUrl(userId, hourLive int, filesIds []int) (string, error)
+	GetUrl(uuid string) (securefilechanger.Url, error)
+	GetFilesList(uuid string) ([]securefilechanger.File, error)
+	DeleteUrl(uuid string) error
+}
+
 // Структура сервиса
 type Service struct {
 	Authorization
 	Folder
 	File
 	User
+	Url
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -65,5 +75,6 @@ func NewService(repos *repository.Repository) *Service {
 		Folder:        NewFolderService(repos.Folder),
 		File:          NewFileService(repos.File),
 		User:          NewUserService(repos.User),
+		Url:           NewUrlService(repos.Url),
 	}
 }
