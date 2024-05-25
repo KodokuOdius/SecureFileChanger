@@ -43,7 +43,6 @@ func (h *Handler) createUrl(c *gin.Context) {
 }
 
 func (h *Handler) getFilesUUid(c *gin.Context) {
-	logrus.Info("[Handler getFilesUUid]")
 	urlUUid := c.Param("uuid")
 
 	if len(urlUUid) != 36 {
@@ -84,8 +83,6 @@ func (h *Handler) getFilesUUid(c *gin.Context) {
 }
 
 func (h *Handler) downloadFilesUUid(c *gin.Context) {
-	logrus.Info("[Handler downloadFilesUUid]")
-
 	urlUUid := c.Param("uuid")
 
 	if len(urlUUid) != 36 {

@@ -35,6 +35,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 		{
 			users.DELETE("/delete", h.deleteUser)
 			users.PUT("/update", h.updateUser)
+			users.GET("/info", h.infoUser)
 			users.POST("/new-password", h.newPassword)
 		}
 
@@ -45,7 +46,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 			// Все файл в директории
 			folders.GET("/:folder_id", h.getFilesInFolder)
 			folders.DELETE("/:folder_id", h.deleteFolder)
-			folders.PUT("/update", h.updateFolder)
+			folders.PUT("/update/:folder_id", h.updateFolder)
 		}
 
 		files := api.Group("/file", h.userIdentity, h.userCheckApprove)
@@ -54,7 +55,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 			files.POST("/upload", h.uploadFile)
 			files.GET("/download/:file_id", h.downloadFile)
 			files.DELETE("/:file_id", h.deleteFile)
-			files.POST("/to-bin/:file_id", h.toBinFile)
+			files.POST("/to-bin/:file_id", h.toBinFile) // !!!
 		}
 
 		admin := api.Group("/admin", h.userIdentity, h.adminIdentify)
@@ -66,12 +67,12 @@ func (h *Handler) InitRouter() *gin.Engine {
 		fileUrl := api.Group("/url", h.userIdentity, h.userCheckApprove)
 		{
 			fileUrl.POST("/create", h.createUrl)
-			fileUrl.GET("/download/:uuid", h.downloadFilesUUid)
 		}
 
 		urlGet := api.Group("/url-get")
 		{
 			urlGet.GET("/files/:uuid", h.getFilesUUid)
+			urlGet.GET("/download/:uuid", h.downloadFilesUUid) // !!!
 		}
 	}
 

@@ -22,10 +22,10 @@ type Authorization interface {
 type Folder interface {
 	Create(userId int, folder securefilechanger.Folder) (int, error)
 	GetAll(userId int) ([]securefilechanger.Folder, error)
-	GetById(folderId, userId int) (securefilechanger.Folder, error)
+	GetById(userId, folderId int) (securefilechanger.Folder, error)
 	GetByName(folderName string, userId int) (int, error)
-	Delete(folderId, userId int) error
-	Update(folderId, userId int, input securefilechanger.UpdateFolder) error
+	Delete(userId, folderId int) error
+	Update(userId, folderId int, input securefilechanger.UpdateFolder) error
 	GetRoot(userId int) (int, error)
 	GetBin(userId int) (int, error)
 }
@@ -46,10 +46,11 @@ type User interface {
 	Update(userId int, input securefilechanger.UpdateUser) error
 	ToggleApprove(userId int) error
 	Delete(userId int) error
-	NewPassword(userId int, password string) error
+	NewPassword(userId int, changePass securefilechanger.ChangePass) error
 	IsApproved(userId int) (bool, error)
 	IsAdmin(userId int) (bool, error)
 	GetAll(adminId int) ([]securefilechanger.User, error)
+	GetInfo(userId int) (securefilechanger.UserInfo, error)
 }
 
 // Сервис работ с временными ссылками

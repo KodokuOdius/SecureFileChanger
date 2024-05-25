@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
 )
@@ -35,8 +37,24 @@ func (s *UserService) Delete(userId int) error {
 	return s.repo.Delete(userId)
 }
 
-func (s *UserService) NewPassword(userId int, password string) error {
-	return s.repo.NewPassword(userId, password)
+func (s *UserService) NewPassword(userId int, changePass securefilechanger.ChangePass) error {
+	if err := changePass.Validate(); err != nil {
+		return err
+	}
+
+	changePass.OldPass = hashPassword(changePass.OldPass)
+	changePass.NewPass = hashPassword(changePass.NewPass)
+
+	ok, err := s.repo.CheckPassword(userId, changePass.OldPass)
+	if err != nil {
+		return err
+	}
+
+	if !ok {
+		return errors.New("wrong password")
+	}
+
+	return s.repo.NewPassword(userId, changePass)
 }
 
 func (s *UserService) IsApproved(userId int) (bool, error) {
@@ -49,4 +67,8 @@ func (s *UserService) IsAdmin(userId int) (bool, error) {
 
 func (s *UserService) GetAll(adminId int) ([]securefilechanger.User, error) {
 	return s.repo.GetAll(adminId)
+}
+
+func (s *UserService) GetInfo(userId int) (securefilechanger.UserInfo, error) {
+	return s.repo.GetInfo(userId)
 }

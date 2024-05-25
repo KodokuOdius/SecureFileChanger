@@ -2,6 +2,9 @@ package service
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/KodokuOdius/SecureFileChanger/pkg/repository"
@@ -40,8 +43,8 @@ func (s *FolderService) GetAll(userId int) ([]securefilechanger.Folder, error) {
 }
 
 // Данные директории
-func (s *FolderService) GetById(folderId, userId int) (securefilechanger.Folder, error) {
-	folder, err := s.repo.GetById(folderId, userId)
+func (s *FolderService) GetById(userId, folderId int) (securefilechanger.Folder, error) {
+	folder, err := s.repo.GetById(userId, folderId)
 
 	if folder.Id == 0 {
 		return folder, errors.New("folder not found")
@@ -61,14 +64,20 @@ func (s *FolderService) GetBin(userId int) (int, error) {
 }
 
 // Удаление директории
-func (s *FolderService) Delete(folderId, userId int) error {
-	return s.repo.Delete(folderId, userId)
+func (s *FolderService) Delete(userId, folderId int) error {
+	err := s.repo.Delete(userId, folderId)
+	if err != nil {
+		return err
+	}
+
+	fullPath := filepath.Join(".", fmt.Sprintf("files/user%d/folder%d", userId, folderId))
+	return os.RemoveAll(fullPath)
 }
 
 // Изменения директории
-func (s *FolderService) Update(folderId, userId int, input securefilechanger.UpdateFolder) error {
+func (s *FolderService) Update(userId, folderId int, input securefilechanger.UpdateFolder) error {
 	if err := input.Validate(); err != nil {
 		return err
 	}
-	return s.repo.Update(folderId, userId, input)
+	return s.repo.Update(userId, folderId, input)
 }

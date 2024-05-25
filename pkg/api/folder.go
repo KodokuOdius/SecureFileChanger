@@ -35,25 +35,25 @@ func (h *Handler) createFolder(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getFolderById(c *gin.Context) {
-	userId, err := getUserId(c)
-	if err != nil {
-		return
-	}
-	id, err := strconv.Atoi(c.Param("folder_id"))
-	if err != nil {
-		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
-		return
-	}
+// func (h *Handler) getFolderById(c *gin.Context) {
+// 	userId, err := getUserId(c)
+// 	if err != nil {
+// 		return
+// 	}
+// 	id, err := strconv.Atoi(c.Param("folder_id"))
+// 	if err != nil {
+// 		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
+// 		return
+// 	}
 
-	folder, err := h.services.Folder.GetById(id, userId)
-	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	folder, err := h.services.Folder.GetById(id, userId)
+// 	if err != nil {
+// 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	c.JSON(http.StatusOK, folder)
-}
+// 	c.JSON(http.StatusOK, folder)
+// }
 
 // Структура для списка директорий
 type getAllFolders struct {
@@ -82,7 +82,8 @@ func (h *Handler) updateFolder(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := strconv.Atoi(c.Param("folder_id"))
+
+	folderId, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
 		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
 		return
@@ -94,14 +95,12 @@ func (h *Handler) updateFolder(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.Folder.Update(id, userId, input); err != nil {
+	if err := h.services.Folder.Update(userId, folderId, input); err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponce{
-		Status: "ok",
-	})
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }
 
 // Удаление директории
@@ -117,13 +116,11 @@ func (h *Handler) deleteFolder(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Folder.Delete(folderId, userId)
+	err = h.services.Folder.Delete(userId, folderId)
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponce{
-		Status: "ok",
-	})
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }

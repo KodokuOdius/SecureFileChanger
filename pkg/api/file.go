@@ -60,9 +60,7 @@ func (h *Handler) deleteFile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponce{
-		Status: "ok",
-	})
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }
 
 // Перемещение в корзину
@@ -114,7 +112,7 @@ func (h *Handler) uploadFile(c *gin.Context) {
 			return
 		}
 	} else {
-		folder, err = h.services.Folder.GetById(folderId, userId)
+		folder, err = h.services.Folder.GetById(userId, folderId)
 		if err != nil {
 			logrus.Infoln("[GetById]")
 			newErrorMessage(c, http.StatusInternalServerError, err.Error())
