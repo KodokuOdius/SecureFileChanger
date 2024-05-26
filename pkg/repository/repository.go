@@ -22,7 +22,6 @@ type Folder interface {
 	Delete(userId, folderId int) error
 	Update(userId, folderId int, input securefilechanger.UpdateFolder) error
 	GetRoot(userId int) (int, error)
-	GetBin(userId int) (int, error)
 }
 
 // Обработчик операций с документами
@@ -32,6 +31,7 @@ type File interface {
 	Delete(fileId, userId int) error
 	GetByName(fileName string, folderId, userId int) (int, error)
 	GetById(fileId, userId int) (securefilechanger.File, error)
+	GetFilesByIds(userId int, fileIds []int) ([]securefilechanger.File, error)
 }
 
 // Обработчик операций с Сотрудниками

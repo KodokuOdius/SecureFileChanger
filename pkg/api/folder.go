@@ -35,26 +35,6 @@ func (h *Handler) createFolder(c *gin.Context) {
 	})
 }
 
-// func (h *Handler) getFolderById(c *gin.Context) {
-// 	userId, err := getUserId(c)
-// 	if err != nil {
-// 		return
-// 	}
-// 	id, err := strconv.Atoi(c.Param("folder_id"))
-// 	if err != nil {
-// 		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
-// 		return
-// 	}
-
-// 	folder, err := h.services.Folder.GetById(id, userId)
-// 	if err != nil {
-// 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusOK, folder)
-// }
-
 // Структура для списка директорий
 type getAllFolders struct {
 	Data []securefilechanger.Folder `json:"data"`

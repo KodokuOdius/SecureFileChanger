@@ -15,6 +15,7 @@ type filesIds struct {
 	HourLive int   `json:"hour_live"`
 }
 
+// Создание временной ссылки
 func (h *Handler) createUrl(c *gin.Context) {
 	logrus.Info("[Handler createUrl]")
 	userId, err := getUserId(c)
@@ -42,6 +43,7 @@ func (h *Handler) createUrl(c *gin.Context) {
 	})
 }
 
+// Список документов по временной ссылке
 func (h *Handler) getFilesUUid(c *gin.Context) {
 	urlUUid := c.Param("uuid")
 
@@ -82,6 +84,7 @@ func (h *Handler) getFilesUUid(c *gin.Context) {
 	c.JSON(http.StatusOK, filesList{Data: files})
 }
 
+// Выгрзука документов по временной ссылке
 func (h *Handler) downloadFilesUUid(c *gin.Context) {
 	urlUUid := c.Param("uuid")
 
@@ -128,5 +131,15 @@ func (h *Handler) downloadFilesUUid(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, filesList{Data: files})
+	if len(files) == 1 {
+		h.DownloadOneFile(c, files[0])
+	} else {
+		err = h.DownloadFileZip(c, files)
+		if err != nil {
+			newErrorMessage(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }

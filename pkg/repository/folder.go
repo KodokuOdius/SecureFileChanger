@@ -32,7 +32,7 @@ func (r *FolderRepository) Create(userId int, folder securefilechanger.Folder) (
 // Список всех директорий
 func (r *FolderRepository) GetAll(userId int) ([]securefilechanger.Folder, error) {
 	var folders []securefilechanger.Folder
-	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE user_id=$1 AND is_root=false", folderTable)
+	query := fmt.Sprintf("SELECT id, name, is_root FROM %s WHERE user_id=$1 AND is_root=false", folderTable)
 	err := r.db.Select(&folders, query, userId)
 
 	return folders, err
@@ -41,7 +41,7 @@ func (r *FolderRepository) GetAll(userId int) ([]securefilechanger.Folder, error
 // Данные одной директории
 func (r *FolderRepository) GetById(userId, folderId int) (securefilechanger.Folder, error) {
 	var folder securefilechanger.Folder
-	query := fmt.Sprintf("SELECT id, name, is_root, is_bin FROM %s WHERE id=$1 AND user_id=$2", folderTable)
+	query := fmt.Sprintf("SELECT id, name, is_root FROM %s WHERE id=$1 AND user_id=$2", folderTable)
 	err := r.db.Get(&folder, query, folderId, userId)
 
 	if err == sql.ErrNoRows {
@@ -51,9 +51,10 @@ func (r *FolderRepository) GetById(userId, folderId int) (securefilechanger.Fold
 	return folder, err
 }
 
+// Получение директории по имени
 func (r *FolderRepository) GetByName(folderName string, userId int) (int, error) {
 	var id int
-	query := fmt.Sprintf("SELECT id FROM %s WHERE user_id=$1 AND name=$2 AND is_bin=false AND is_root=false", folderTable)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE user_id=$1 AND name=$2 AND is_root=false", folderTable)
 	err := r.db.Get(&id, query, userId, folderName)
 
 	if err == sql.ErrNoRows {
@@ -72,18 +73,9 @@ func (r *FolderRepository) GetRoot(userId int) (int, error) {
 	return id, err
 }
 
-// id корзины
-func (r *FolderRepository) GetBin(userId int) (int, error) {
-	var id int
-	query := fmt.Sprintf("SELECT id from %s WHERE user_id=$1 AND is_bin", folderTable)
-	err := r.db.Get(&id, query, userId)
-
-	return id, err
-}
-
 // Удаление директории
 func (r *FolderRepository) Delete(userId, folderId int) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1 AND user_id=$2 AND is_bin=false AND is_root=false", folderTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1 AND user_id=$2 AND is_root=false", folderTable)
 	_, err := r.db.Exec(query, folderId, userId)
 
 	return err
@@ -95,7 +87,7 @@ func (r *FolderRepository) Update(userId, folderId int, input securefilechanger.
 		return nil
 	}
 
-	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE id=$2 AND user_id=$3 AND is_bin=false AND is_root=false", folderTable)
+	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE id=$2 AND user_id=$3 AND is_root=false", folderTable)
 
 	_, err := r.db.Exec(query, input.Name, folderId, userId)
 	return err

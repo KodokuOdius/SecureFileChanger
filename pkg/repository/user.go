@@ -26,6 +26,7 @@ func (r *UserRepository) Update(userId int, input securefilechanger.UpdateUser) 
 	return err
 }
 
+// Удаление Сотрудника
 func (r *UserRepository) Delete(userId int) error {
 	query := fmt.Sprintf("DELETE FROM \"%s\" WHERE id=$1", userTable)
 	_, err := r.db.Exec(query, userId)
@@ -33,6 +34,7 @@ func (r *UserRepository) Delete(userId int) error {
 	return err
 }
 
+// Смена пароля
 func (r *UserRepository) NewPassword(userId int, changePass securefilechanger.ChangePass) error {
 	query := fmt.Sprintf("UPDATE \"%s\" SET password=$1 WHERE id=$2 AND password=$3", userTable)
 	_, err := r.db.Exec(query, changePass.NewPass, userId, changePass.OldPass)
@@ -40,6 +42,7 @@ func (r *UserRepository) NewPassword(userId int, changePass securefilechanger.Ch
 	return err
 }
 
+// Проверка пароля
 func (r *UserRepository) CheckPassword(userId int, password string) (bool, error) {
 	var ok bool
 	query := fmt.Sprintf("SELECT true from \"%s\" WHERE id=$1 AND password=$2", userTable)
@@ -52,6 +55,7 @@ func (r *UserRepository) CheckPassword(userId int, password string) (bool, error
 	return ok, err
 }
 
+// Проверка доступа
 func (r *UserRepository) IsApproved(userId int) (bool, error) {
 	var isApproved bool
 	query := fmt.Sprintf("SELECT is_approved FROM \"%s\" WHERE id=$1", userTable)
@@ -64,6 +68,7 @@ func (r *UserRepository) IsApproved(userId int) (bool, error) {
 	return isApproved, err
 }
 
+// Проверка на доступ к админ панели
 func (r *UserRepository) IsAdmin(userId int) (bool, error) {
 	var isAdmin bool
 	query := fmt.Sprintf("SELECT is_admin FROM \"%s\" WHERE id=$1", userTable)
@@ -76,6 +81,7 @@ func (r *UserRepository) IsAdmin(userId int) (bool, error) {
 	return isAdmin, err
 }
 
+// Список всех сотрудников
 func (r *UserRepository) GetAll(adminId int) ([]securefilechanger.User, error) {
 	var users []securefilechanger.User
 	query := fmt.Sprintf("SELECT id, email, name, surname, is_approved FROM \"%s\" WHERE id != $1", userTable)
@@ -104,6 +110,7 @@ func (r *UserRepository) SetDisable(userId int) error {
 	return err
 }
 
+// Информация о Сотруднике
 func (r *UserRepository) GetInfo(userId int) (securefilechanger.UserInfo, error) {
 	var user securefilechanger.UserInfo
 	query := fmt.Sprintf("SELECT email, name, surname, is_admin, is_approved FROM \"%s\" WHERE id=$1", userTable)

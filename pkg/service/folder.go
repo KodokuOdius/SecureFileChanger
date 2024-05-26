@@ -33,6 +33,7 @@ func (s *FolderService) Create(userId int, folder securefilechanger.Folder) (int
 	return s.repo.Create(userId, folder)
 }
 
+// Полчение директории по имени
 func (s *FolderService) GetByName(folderName string, userId int) (int, error) {
 	return s.repo.GetByName(folderName, userId)
 }
@@ -56,11 +57,6 @@ func (s *FolderService) GetById(userId, folderId int) (securefilechanger.Folder,
 // id корневой директории
 func (s *FolderService) GetRoot(userId int) (int, error) {
 	return s.repo.GetRoot(userId)
-}
-
-// id корзины
-func (s *FolderService) GetBin(userId int) (int, error) {
-	return s.repo.GetBin(userId)
 }
 
 // Удаление директории

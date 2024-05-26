@@ -17,6 +17,7 @@ func NewUrlService(repo repository.Url) *UrlService {
 	return &UrlService{repo: repo}
 }
 
+// Создание временной ссылки
 func (s *UrlService) CreateUrl(userId, hourLive int, filesIds []int) (string, error) {
 	cleadIds, err := s.repo.CheckFileIds(userId, filesIds)
 	if err != nil {
@@ -45,14 +46,22 @@ func (s *UrlService) CreateUrl(userId, hourLive int, filesIds []int) (string, er
 	return url.UUid, nil
 }
 
+// Полчение данных о временной ссылки
 func (s *UrlService) GetUrl(uuid string) (securefilechanger.Url, error) {
 	return s.repo.GetByUUid(uuid)
 }
 
+// Список документов по временной ссылки
 func (s *UrlService) GetFilesList(uuid string) ([]securefilechanger.File, error) {
 	return s.repo.GetFilesByUrlUUid(uuid)
 }
 
+// Удаление временной ссылки
 func (s *UrlService) DeleteUrl(uuid string) error {
 	return s.repo.DeleteUrl(uuid)
+}
+
+// Проверка id документов
+func (s *UrlService) CheckFileIds(userId int, fileIds []int) ([]int, error) {
+	return s.repo.CheckFileIds(userId, fileIds)
 }

@@ -52,6 +52,7 @@ func (h *Handler) logMiddleware(c *gin.Context) {
 	c.Next()
 }
 
+// middlware для проверки доступа Сотрудника
 func (h *Handler) userCheckApprove(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -70,6 +71,7 @@ func (h *Handler) userCheckApprove(c *gin.Context) {
 	}
 }
 
+// middlware для проверки доступа к Админ панели
 func (h *Handler) adminIdentify(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {

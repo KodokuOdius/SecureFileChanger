@@ -1,6 +1,7 @@
 package service
 
 import (
+	"archive/zip"
 	"crypto/cipher"
 	"io"
 	"os"
@@ -27,7 +28,6 @@ type Folder interface {
 	Delete(userId, folderId int) error
 	Update(userId, folderId int, input securefilechanger.UpdateFolder) error
 	GetRoot(userId int) (int, error)
-	GetBin(userId int) (int, error)
 }
 
 // Сервис работ с документами
@@ -39,6 +39,7 @@ type File interface {
 	FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error)
 	GetByName(fileName string, folderId, userId int) (int, error)
 	GetById(fileId, userId int) (securefilechanger.File, error)
+	GetFilesByIds(userId int, fileIds []int) ([]securefilechanger.File, error)
 }
 
 // Сервис работ с Сотрудниками
@@ -59,6 +60,11 @@ type Url interface {
 	GetUrl(uuid string) (securefilechanger.Url, error)
 	GetFilesList(uuid string) ([]securefilechanger.File, error)
 	DeleteUrl(uuid string) error
+	CheckFileIds(userId int, fileIds []int) ([]int, error)
+}
+
+type ZipService interface {
+	AddFileToArchive(fileName string, srcFile io.Reader, zipw *zip.Writer) error
 }
 
 // Структура сервиса
@@ -68,6 +74,7 @@ type Service struct {
 	File
 	User
 	Url
+	ZipService
 }
 
 func NewService(repos *repository.Repository) *Service {
@@ -77,5 +84,6 @@ func NewService(repos *repository.Repository) *Service {
 		File:          NewFileService(repos.File),
 		User:          NewUserService(repos.User),
 		Url:           NewUrlService(repos.Url),
+		ZipService:    NewZipService(),
 	}
 }

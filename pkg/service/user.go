@@ -16,10 +16,12 @@ func NewUserService(repo repository.User) *UserService {
 	return &UserService{repo: repo}
 }
 
+// Изменение Сотрудника
 func (s *UserService) Update(userId int, input securefilechanger.UpdateUser) error {
 	return s.repo.Update(userId, input)
 }
 
+// Изменение доступа Сотруднику
 func (s *UserService) ToggleApprove(userId int) error {
 	isApproved, err := s.repo.IsApproved(userId)
 	if err != nil {
@@ -33,10 +35,12 @@ func (s *UserService) ToggleApprove(userId int) error {
 	return s.repo.SetApprove(userId)
 }
 
+// Удаление УЗ Сотрудника
 func (s *UserService) Delete(userId int) error {
 	return s.repo.Delete(userId)
 }
 
+// Смена пароля сотрудника
 func (s *UserService) NewPassword(userId int, changePass securefilechanger.ChangePass) error {
 	if err := changePass.Validate(); err != nil {
 		return err
@@ -57,18 +61,22 @@ func (s *UserService) NewPassword(userId int, changePass securefilechanger.Chang
 	return s.repo.NewPassword(userId, changePass)
 }
 
+// Проверка на доступ
 func (s *UserService) IsApproved(userId int) (bool, error) {
 	return s.repo.IsApproved(userId)
 }
 
+// Проверка на доступ к админ панели
 func (s *UserService) IsAdmin(userId int) (bool, error) {
 	return s.repo.IsAdmin(userId)
 }
 
+// Список Сотрудников
 func (s *UserService) GetAll(adminId int) ([]securefilechanger.User, error) {
 	return s.repo.GetAll(adminId)
 }
 
+// Информация о сотруднике
 func (s *UserService) GetInfo(userId int) (securefilechanger.UserInfo, error) {
 	return s.repo.GetInfo(userId)
 }

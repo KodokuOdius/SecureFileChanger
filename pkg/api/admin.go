@@ -6,13 +6,13 @@ import (
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type userList struct {
 	Data []securefilechanger.User `json:"data"`
 }
 
+// Список сотрудников
 func (h *Handler) userList(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -28,10 +28,8 @@ func (h *Handler) userList(c *gin.Context) {
 	c.JSON(http.StatusOK, userList{Data: users})
 }
 
+// Ограничение доступа Сотруднику
 func (h *Handler) toggleUserApprove(c *gin.Context) {
-	// only admin
-
-	logrus.Info("[toggleUserApprove]")
 	adminId, err := getUserId(c)
 	if err != nil {
 		return
@@ -59,6 +57,7 @@ func (h *Handler) toggleUserApprove(c *gin.Context) {
 	})
 }
 
+// Проверка на существование Администратора
 func (h *Handler) adminExist(c *gin.Context) {
 	adminExist, err := h.services.Authorization.CheckAdminIsExists()
 

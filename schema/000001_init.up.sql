@@ -12,8 +12,7 @@ create table if not exists "folder" (
     id      serial primary key unique,
     name    varchar(100) not null,
     user_id integer references "user"(id) on DELETE CASCADE not null,
-    is_root BOOLEAN default false,
-    is_bin  BOOLEAN default false
+    is_root BOOLEAN default false
 );
 
 create table if not exists "file" (

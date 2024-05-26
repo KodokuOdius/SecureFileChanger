@@ -38,10 +38,12 @@ func (s *FileService) Create(userId int, metaFile securefilechanger.File) (int, 
 	return s.repo.Create(userId, metaFile)
 }
 
+// Получение документо по id
 func (s *FileService) GetById(fileId, userId int) (securefilechanger.File, error) {
 	return s.repo.GetById(fileId, userId)
 }
 
+// Получение документо по имени
 func (s *FileService) GetByName(fileName string, folderId, userId int) (int, error) {
 	return s.repo.GetByName(fileName, folderId, userId)
 }
@@ -49,6 +51,11 @@ func (s *FileService) GetByName(fileName string, folderId, userId int) (int, err
 // Список документов в директории
 func (s *FileService) GetFilesInFolder(userId int, folderId *int) ([]securefilechanger.File, error) {
 	return s.repo.GetFilesInFolder(userId, *folderId)
+}
+
+// Получение документов по id
+func (s *FileService) GetFilesByIds(userId int, fileIds []int) ([]securefilechanger.File, error) {
+	return s.repo.GetFilesByIds(userId, fileIds)
 }
 
 // Удаление документа
@@ -67,6 +74,7 @@ func (s *FileService) Delete(fileId, userId int) error {
 	return os.Remove(fullPath)
 }
 
+// Шифрование документа
 func (s *FileService) FileEncrypt(fileName string, inputFile io.Reader) (string, error) {
 	logrus.Info("[FileEncrypt] encrypte file ", fileName)
 
@@ -101,6 +109,7 @@ func (s *FileService) FileEncrypt(fileName string, inputFile io.Reader) (string,
 	return encfileName, nil
 }
 
+// Дешифрование документа
 func (s *FileService) FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error) {
 	decfileName := strings.ReplaceAll(encfileName, ".enc", "")
 	logrus.Info("[FileDecryption] dencrypte file ", decfileName)

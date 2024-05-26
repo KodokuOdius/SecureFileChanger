@@ -54,8 +54,8 @@ func (h *Handler) InitRouter() *gin.Engine {
 			// create file
 			files.POST("/upload", h.uploadFile)
 			files.GET("/download/:file_id", h.downloadFile)
+			files.POST("/download-many", h.downloadManyFiles)
 			files.DELETE("/:file_id", h.deleteFile)
-			files.POST("/to-bin/:file_id", h.toBinFile) // !!!
 		}
 
 		admin := api.Group("/admin", h.userIdentity, h.adminIdentify)
@@ -72,7 +72,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 		urlGet := api.Group("/url-get")
 		{
 			urlGet.GET("/files/:uuid", h.getFilesUUid)
-			urlGet.GET("/download/:uuid", h.downloadFilesUUid) // !!!
+			urlGet.GET("/download/:uuid", h.downloadFilesUUid)
 		}
 	}
 

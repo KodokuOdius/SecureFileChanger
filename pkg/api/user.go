@@ -37,6 +37,7 @@ func (h *Handler) updateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }
 
+// Профиль Сотрудника
 func (h *Handler) infoUser(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -52,6 +53,7 @@ func (h *Handler) infoUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// Удаление УЗ Сотрудника
 func (h *Handler) deleteUser(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -71,6 +73,7 @@ func (h *Handler) deleteUser(c *gin.Context) {
 	os.RemoveAll(path)
 }
 
+// Смена пароля Сотрудника
 func (h *Handler) newPassword(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {

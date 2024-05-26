@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Репозиторий для работ с документами
+// Репозиторий для работ с временными ссылками
 type UrlRepository struct {
 	db *sqlx.DB
 }
@@ -18,6 +18,7 @@ func NewUrlRepository(db *sqlx.DB) *UrlRepository {
 	return &UrlRepository{db: db}
 }
 
+// Создание временной ссылки
 func (r *UrlRepository) CreateUrl(userId int, url securefilechanger.Url, filesIds []int) error {
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -45,6 +46,7 @@ func (r *UrlRepository) CreateUrl(userId int, url securefilechanger.Url, filesId
 	return tx.Commit()
 }
 
+// Проверка id документов
 func (r *UrlRepository) CheckFileIds(userId int, fileIds []int) ([]int, error) {
 	var clearIds []int
 
@@ -65,6 +67,7 @@ func (r *UrlRepository) CheckFileIds(userId int, fileIds []int) ([]int, error) {
 	return clearIds, err
 }
 
+// Полчение ссылки по uuid
 func (r *UrlRepository) GetByUUid(uuid string) (securefilechanger.Url, error) {
 	var url securefilechanger.Url
 	query := fmt.Sprintf("SELECT id, uuid, hour_live, create_dt FROM %s WHERE uuid=$1", urlTable)
@@ -77,6 +80,7 @@ func (r *UrlRepository) GetByUUid(uuid string) (securefilechanger.Url, error) {
 	return url, err
 }
 
+// Получение списка документов по uuid
 func (r *UrlRepository) GetFilesByUrlUUid(uuid string) ([]securefilechanger.File, error) {
 	var files []securefilechanger.File
 
@@ -99,6 +103,7 @@ func (r *UrlRepository) GetFilesByUrlUUid(uuid string) ([]securefilechanger.File
 	return files, nil
 }
 
+// Удаление временной ссылки
 func (r *UrlRepository) DeleteUrl(uuid string) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE uuid=$1", urlTable)
 	_, err := r.db.Exec(query, uuid)

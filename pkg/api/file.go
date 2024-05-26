@@ -14,11 +14,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Список документов в директории
 type filesList struct {
 	Data []securefilechanger.File `json:"data"`
 }
 
+// Список документов в директории
 func (h *Handler) getFilesInFolder(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -61,10 +61,6 @@ func (h *Handler) deleteFile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
-}
-
-// Перемещение в корзину
-func (h *Handler) toBinFile(c *gin.Context) {
 }
 
 // Загрузка документов
@@ -182,30 +178,36 @@ func (h *Handler) downloadFile(c *gin.Context) {
 		return
 	}
 
-	directory := filepath.Join(file.Path, fmt.Sprintf("document%d.enc", fileId))
+	h.DownloadOneFile(c, file)
 
-	// If Exists
-	_, err = os.Open(directory)
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
+}
+
+// Выгрзка одного документа
+func (h *Handler) DownloadOneFile(c *gin.Context, file securefilechanger.File) {
+	srcPath := filepath.Join(file.Path, fmt.Sprintf("document%d.enc", file.Id))
+
+	_, err := os.Stat(srcPath)
 	if err != nil {
-		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		h.services.File.Delete(file.Id, file.OwnerId)
+		newErrorMessage(c, http.StatusNotFound, "file already deleted")
 		return
 	}
 
 	// Поток дешифрования
-	reader, srcFile, err := h.services.File.FileDencrypt(os.Getenv("AES_KEY"), directory)
+	reader, srcFile, err := h.services.File.FileDencrypt(os.Getenv("AES_KEY"), srcPath)
 	defer srcFile.Close()
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	c.Writer.Header().Set("Content-Type", "application/%s"+strings.ReplaceAll(file.Type, ".", ""))
 	c.Writer.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(file.Name+file.Type))
-	// gzip writer
+
 	_, err = io.Copy(c.Writer, reader)
 	if err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	c.Status(http.StatusOK)
 }
