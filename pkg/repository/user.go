@@ -7,6 +7,7 @@ import (
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 // Репозиторий для работ с Сотрудниками
@@ -20,7 +21,7 @@ func NewUserRepository(db *sqlx.DB) *UserRepository {
 
 // Изменение Сотрудника
 func (r *UserRepository) Update(userId int, input securefilechanger.UpdateUser) error {
-	query := fmt.Sprintf("UPDATE \"%s\" SET name=$1, surname=$2 WHERE id=$3", userTable)
+	query := fmt.Sprintf("UPDATE %s SET name=$1, surname=$2 WHERE id=$3", userTable)
 	_, err := r.db.Exec(query, *input.Name, *input.SurName, userId)
 
 	return err
@@ -28,7 +29,7 @@ func (r *UserRepository) Update(userId int, input securefilechanger.UpdateUser) 
 
 // Удаление Сотрудника
 func (r *UserRepository) Delete(userId int) error {
-	query := fmt.Sprintf("DELETE FROM \"%s\" WHERE id=$1", userTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1", userTable)
 	_, err := r.db.Exec(query, userId)
 
 	return err
@@ -36,7 +37,7 @@ func (r *UserRepository) Delete(userId int) error {
 
 // Смена пароля
 func (r *UserRepository) NewPassword(userId int, changePass securefilechanger.ChangePass) error {
-	query := fmt.Sprintf("UPDATE \"%s\" SET password=$1 WHERE id=$2 AND password=$3", userTable)
+	query := fmt.Sprintf("UPDATE %s SET password=$1 WHERE id=$2 AND password=$3", userTable)
 	_, err := r.db.Exec(query, changePass.NewPass, userId, changePass.OldPass)
 
 	return err
@@ -45,7 +46,7 @@ func (r *UserRepository) NewPassword(userId int, changePass securefilechanger.Ch
 // Проверка пароля
 func (r *UserRepository) CheckPassword(userId int, password string) (bool, error) {
 	var ok bool
-	query := fmt.Sprintf("SELECT true from \"%s\" WHERE id=$1 AND password=$2", userTable)
+	query := fmt.Sprintf("SELECT true from %s WHERE id=$1 AND password=$2", userTable)
 	err := r.db.Get(&ok, query, userId, password)
 
 	if err == sql.ErrNoRows {
@@ -58,7 +59,7 @@ func (r *UserRepository) CheckPassword(userId int, password string) (bool, error
 // Проверка доступа
 func (r *UserRepository) IsApproved(userId int) (bool, error) {
 	var isApproved bool
-	query := fmt.Sprintf("SELECT is_approved FROM \"%s\" WHERE id=$1", userTable)
+	query := fmt.Sprintf("SELECT is_approved FROM %s WHERE id=$1", userTable)
 	err := r.db.Get(&isApproved, query, userId)
 
 	if err == sql.ErrNoRows {
@@ -71,7 +72,7 @@ func (r *UserRepository) IsApproved(userId int) (bool, error) {
 // Проверка на доступ к админ панели
 func (r *UserRepository) IsAdmin(userId int) (bool, error) {
 	var isAdmin bool
-	query := fmt.Sprintf("SELECT is_admin FROM \"%s\" WHERE id=$1", userTable)
+	query := fmt.Sprintf("SELECT is_admin FROM %s WHERE id=$1", userTable)
 	err := r.db.Get(&isAdmin, query, userId)
 
 	if err == sql.ErrNoRows {
@@ -84,8 +85,22 @@ func (r *UserRepository) IsAdmin(userId int) (bool, error) {
 // Список всех сотрудников
 func (r *UserRepository) GetAll(adminId int) ([]securefilechanger.User, error) {
 	var users []securefilechanger.User
-	query := fmt.Sprintf("SELECT id, email, name, surname, is_approved FROM \"%s\" WHERE id != $1", userTable)
+	query := fmt.Sprintf("SELECT id, email, name, surname, is_approved FROM %s WHERE id != $1", userTable)
 	err := r.db.Select(&users, query, adminId)
+
+	if err == sql.ErrNoRows {
+		return users, nil
+	}
+
+	return users, err
+}
+
+// Поиск сотрудников
+func (r *UserRepository) GetLike(adminId int, queryName string) ([]securefilechanger.User, error) {
+	var users []securefilechanger.User
+	query := fmt.Sprintf("SELECT id, email, name, surname, is_approved FROM %s WHERE id!=$1 AND email LIKE $2", userTable)
+	logrus.Info("[GetLike] ", query)
+	err := r.db.Select(&users, query, adminId, queryName+"%")
 
 	if err == sql.ErrNoRows {
 		return users, nil
@@ -96,7 +111,7 @@ func (r *UserRepository) GetAll(adminId int) ([]securefilechanger.User, error) {
 
 // Выдача доступа Сотруднику
 func (r *UserRepository) SetApprove(userId int) error {
-	query := fmt.Sprintf("UPDATE \"%s\" SET is_approved=true WHERE id=$1", userTable)
+	query := fmt.Sprintf("UPDATE %s SET is_approved=true WHERE id=$1", userTable)
 	_, err := r.db.Exec(query, userId)
 
 	return err
@@ -104,7 +119,7 @@ func (r *UserRepository) SetApprove(userId int) error {
 
 // Ограничение доступа Сотруднику
 func (r *UserRepository) SetDisable(userId int) error {
-	query := fmt.Sprintf("UPDATE \"%s\" SET is_approved=false WHERE id=$1", userTable)
+	query := fmt.Sprintf("UPDATE %s SET is_approved=false WHERE id=$1", userTable)
 	_, err := r.db.Exec(query, userId)
 
 	return err
@@ -113,7 +128,7 @@ func (r *UserRepository) SetDisable(userId int) error {
 // Информация о Сотруднике
 func (r *UserRepository) GetInfo(userId int) (securefilechanger.UserInfo, error) {
 	var user securefilechanger.UserInfo
-	query := fmt.Sprintf("SELECT email, name, surname, is_admin, is_approved FROM \"%s\" WHERE id=$1", userTable)
+	query := fmt.Sprintf("SELECT email, name, surname, is_admin, is_approved FROM %s WHERE id=$1", userTable)
 	err := r.db.Get(&user, query, userId)
 
 	return user, err

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
@@ -15,9 +14,7 @@ import (
 
 // основные константы
 const (
-	salt       = "qp234895yw450otuhwsreolgs"
-	tokenTTL   = 12 * time.Hour
-	signingKey = "q78o423rytq4378rtywo487tghwoi43uythgw3i4oty"
+	tokenTTL = 12 * time.Hour
 )
 
 // Структура для токена
@@ -54,12 +51,6 @@ func (s *AuthService) CreateUser(user securefilechanger.User) (int, error) {
 		return 0, err
 	}
 
-	path := filepath.Join(".", fmt.Sprintf("files/user%d/bin", userId))
-	err = os.MkdirAll(path, os.ModePerm)
-	if err != nil {
-		return 0, err
-	}
-
 	return userId, err
 }
 
@@ -91,7 +82,7 @@ func (s *AuthService) GenerateToken(email, password string) (string, error) {
 		UserId: user.Id,
 	})
 
-	return token.SignedString([]byte(signingKey))
+	return token.SignedString([]byte(os.Getenv("AES_KEY")))
 }
 
 // Обработка токена
@@ -100,7 +91,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-		return []byte(signingKey), nil
+		return []byte(os.Getenv("AES_KEY")), nil
 	})
 
 	if err != nil {
@@ -108,7 +99,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	}
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token invalid")
+		return 0, errors.New("invalid token")
 	}
 
 	return claims.UserId, nil
@@ -118,5 +109,5 @@ func hashPassword(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+	return fmt.Sprintf("%x", hash.Sum([]byte(os.Getenv("AES_KEY"))))
 }

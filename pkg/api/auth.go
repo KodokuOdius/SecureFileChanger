@@ -10,7 +10,7 @@ import (
 
 // Регистрация
 func (h *Handler) register(c *gin.Context) {
-	var input securefilechanger.User
+	var input securefilechanger.AuthInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorMessage(c, http.StatusBadRequest, err.Error())
@@ -18,7 +18,12 @@ func (h *Handler) register(c *gin.Context) {
 	}
 
 	// Create user
-	id, err := h.services.Authorization.CreateUser(input)
+	user := securefilechanger.User{
+		Email:    input.Email,
+		Password: input.Password,
+	}
+
+	id, err := h.services.Authorization.CreateUser(user)
 	if err != nil {
 		logrus.Infoln("[CreateUser]")
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
@@ -30,15 +35,9 @@ func (h *Handler) register(c *gin.Context) {
 	})
 }
 
-// Структура для авторизации
-type sighInInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 // Авторизация
 func (h *Handler) logIn(c *gin.Context) {
-	var input sighInInput
+	var input securefilechanger.AuthInput
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorMessage(c, http.StatusBadRequest, err.Error())

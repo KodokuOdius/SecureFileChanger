@@ -28,6 +28,27 @@ func (h *Handler) userList(c *gin.Context) {
 	c.JSON(http.StatusOK, userList{Data: users})
 }
 
+func (h *Handler) userListSearch(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	query := c.Query("q")
+	if query == "" {
+		newErrorMessage(c, http.StatusBadRequest, "no query params")
+		return
+	}
+
+	users, err := h.services.User.GetLike(userId, query)
+	if err != nil {
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, userList{Data: users})
+}
+
 // Ограничение доступа Сотруднику
 func (h *Handler) toggleUserApprove(c *gin.Context) {
 	adminId, err := getUserId(c)

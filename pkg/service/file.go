@@ -38,6 +38,15 @@ func (s *FileService) Create(userId int, metaFile securefilechanger.File) (int, 
 	return s.repo.Create(userId, metaFile)
 }
 
+// Изменение имени документа
+func (s *FileService) Update(userId, fileId int, input securefilechanger.UpdateFile) error {
+	if err := input.Validate(); err != nil {
+		return err
+	}
+
+	return s.repo.Update(userId, fileId, input)
+}
+
 // Получение документо по id
 func (s *FileService) GetById(fileId, userId int) (securefilechanger.File, error) {
 	return s.repo.GetById(fileId, userId)

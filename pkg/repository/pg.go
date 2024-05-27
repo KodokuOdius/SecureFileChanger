@@ -6,9 +6,9 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// Основные таблицы ЬД
+// Основные таблицы БД
 const (
-	userTable    = "user"
+	userTable    = "cloud_user"
 	fileTable    = "file"
 	folderTable  = "folder"
 	urlTable     = "upload_url"

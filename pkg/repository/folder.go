@@ -32,7 +32,7 @@ func (r *FolderRepository) Create(userId int, folder securefilechanger.Folder) (
 // Список всех директорий
 func (r *FolderRepository) GetAll(userId int) ([]securefilechanger.Folder, error) {
 	var folders []securefilechanger.Folder
-	query := fmt.Sprintf("SELECT id, name, is_root FROM %s WHERE user_id=$1 AND is_root=false", folderTable)
+	query := fmt.Sprintf("SELECT id, name, is_root FROM %s WHERE user_id=$1", folderTable)
 	err := r.db.Select(&folders, query, userId)
 
 	return folders, err

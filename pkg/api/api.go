@@ -56,11 +56,13 @@ func (h *Handler) InitRouter() *gin.Engine {
 			files.GET("/download/:file_id", h.downloadFile)
 			files.POST("/download-many", h.downloadManyFiles)
 			files.DELETE("/:file_id", h.deleteFile)
+			files.PUT("update/:file_id", h.updateFile)
 		}
 
 		admin := api.Group("/admin", h.userIdentity, h.adminIdentify)
 		{
 			admin.GET("/user-list", h.userList)
+			admin.GET("/user-list/search", h.userListSearch)
 			admin.PUT("/toggle-approve/:user_id", h.toggleUserApprove)
 		}
 

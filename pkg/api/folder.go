@@ -75,6 +75,12 @@ func (h *Handler) updateFolder(c *gin.Context) {
 		return
 	}
 
+	_, err = h.services.Folder.GetById(userId, folderId)
+	if err != nil {
+		newErrorMessage(c, http.StatusNotFound, err.Error())
+		return
+	}
+
 	if err := h.services.Folder.Update(userId, folderId, input); err != nil {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
@@ -93,6 +99,12 @@ func (h *Handler) deleteFolder(c *gin.Context) {
 	folderId, err := strconv.Atoi(c.Param("folder_id"))
 	if err != nil {
 		newErrorMessage(c, http.StatusBadRequest, "invalid folder id")
+		return
+	}
+
+	_, err = h.services.Folder.GetById(userId, folderId)
+	if err != nil {
+		newErrorMessage(c, http.StatusNotFound, err.Error())
 		return
 	}
 

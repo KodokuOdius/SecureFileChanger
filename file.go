@@ -16,6 +16,14 @@ type UpdateFile struct {
 	Name *string `json:"file_name"`
 }
 
+func (u UpdateFile) Validate() error {
+	if u.Name == nil {
+		return errors.New("update has no values")
+	}
+
+	return nil
+}
+
 type Folder struct {
 	Id      int    `json:"id" db:"id"`
 	Name    string `json:"folder_name" db:"name" binding:"required"`

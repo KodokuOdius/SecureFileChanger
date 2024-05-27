@@ -70,7 +70,7 @@ func (h *Handler) deleteUser(c *gin.Context) {
 
 	path := filepath.Join(".", fmt.Sprintf("files/user%d", userId))
 
-	os.RemoveAll(path)
+	go os.RemoveAll(path)
 }
 
 // Смена пароля Сотрудника

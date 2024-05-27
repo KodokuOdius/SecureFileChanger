@@ -75,5 +75,6 @@ func (s *FolderService) Update(userId, folderId int, input securefilechanger.Upd
 	if err := input.Validate(); err != nil {
 		return err
 	}
+
 	return s.repo.Update(userId, folderId, input)
 }

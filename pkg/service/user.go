@@ -76,6 +76,11 @@ func (s *UserService) GetAll(adminId int) ([]securefilechanger.User, error) {
 	return s.repo.GetAll(adminId)
 }
 
+// Поиск сотрудников
+func (s *UserService) GetLike(adminId int, queryName string) ([]securefilechanger.User, error) {
+	return s.repo.GetLike(adminId, queryName)
+}
+
 // Информация о сотруднике
 func (s *UserService) GetInfo(userId int) (securefilechanger.UserInfo, error) {
 	return s.repo.GetInfo(userId)

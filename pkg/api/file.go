@@ -31,6 +31,12 @@ func (h *Handler) getFilesInFolder(c *gin.Context) {
 		return
 	}
 
+	_, err = h.services.Folder.GetById(userId, folderId)
+	if err != nil {
+		newErrorMessage(c, http.StatusNotFound, err.Error())
+		return
+	}
+
 	files, err := h.services.File.GetFilesInFolder(userId, &folderId)
 	if err != nil {
 		logrus.Infoln("[GetFilesInFolder]")
@@ -210,4 +216,37 @@ func (h *Handler) DownloadOneFile(c *gin.Context, file securefilechanger.File) {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+}
+
+// Изменение имени документа
+func (h *Handler) updateFile(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	fileId, err := strconv.Atoi(c.Param("file_id"))
+	if err != nil {
+		newErrorMessage(c, http.StatusBadRequest, "invalid file id")
+		return
+	}
+
+	var input securefilechanger.UpdateFile
+	if err := c.BindJSON(&input); err != nil {
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	_, err = h.services.File.GetById(fileId, userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	if err := h.services.File.Update(userId, fileId, input); err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }

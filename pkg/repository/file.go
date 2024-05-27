@@ -31,6 +31,18 @@ func (r *FileRepository) Create(userId int, metaFile securefilechanger.File) (in
 	return id, nil
 }
 
+// Изменение имени документа
+func (r *FileRepository) Update(userId, fileId int, input securefilechanger.UpdateFile) error {
+	if input.Name == nil {
+		return nil
+	}
+
+	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE id=$2 AND user_id=$3", fileTable)
+
+	_, err := r.db.Exec(query, input.Name, fileId, userId)
+	return err
+}
+
 // Получение документа по id
 func (r *FileRepository) GetById(fileId, userId int) (securefilechanger.File, error) {
 	var file securefilechanger.File

@@ -27,6 +27,7 @@ type Folder interface {
 // Обработчик операций с документами
 type File interface {
 	Create(userId int, metaFile securefilechanger.File) (int, error)
+	Update(userId, fileId int, input securefilechanger.UpdateFile) error
 	GetFilesInFolder(userId int, folderId int) ([]securefilechanger.File, error)
 	Delete(fileId, userId int) error
 	GetByName(fileName string, folderId, userId int) (int, error)
@@ -46,6 +47,7 @@ type User interface {
 	SetDisable(userId int) error
 	GetInfo(userId int) (securefilechanger.UserInfo, error)
 	CheckPassword(userId int, password string) (bool, error)
+	GetLike(adminId int, queryName string) ([]securefilechanger.User, error)
 }
 
 // Обработчик операций с временными ссылками
