@@ -48,6 +48,7 @@ type User interface {
 	GetInfo(userId int) (securefilechanger.UserInfo, error)
 	CheckPassword(userId int, password string) (bool, error)
 	GetLike(adminId int, queryName string) ([]securefilechanger.User, error)
+	GetUsedBytes(userId int) (int, error)
 }
 
 // Обработчик операций с временными ссылками

@@ -34,7 +34,7 @@ type Folder interface {
 type File interface {
 	Create(userId int, metaFile securefilechanger.File) (int, error)
 	Update(userId, fileId int, input securefilechanger.UpdateFile) error
-	GetFilesInFolder(userId int, folderId *int) ([]securefilechanger.File, error)
+	GetFilesInFolder(userId int, folderId int) ([]securefilechanger.File, error)
 	Delete(fileId, userId int) error
 	FileEncrypt(fileName string, inputFile io.Reader) (string, error)
 	FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error)
@@ -54,6 +54,7 @@ type User interface {
 	GetAll(adminId int) ([]securefilechanger.User, error)
 	GetInfo(userId int) (securefilechanger.UserInfo, error)
 	GetLike(adminId int, queryName string) ([]securefilechanger.User, error)
+	GetUsedBytes(userId int) (int, error)
 }
 
 // Сервис работ с временными ссылками

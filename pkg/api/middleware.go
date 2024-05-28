@@ -40,6 +40,7 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	}
 
 	c.Set(userCtx, userId)
+	c.Next()
 }
 
 // middlware для логгирования запросов
@@ -69,6 +70,8 @@ func (h *Handler) userCheckApprove(c *gin.Context) {
 		newErrorMessage(c, http.StatusForbidden, "user not approved")
 		return
 	}
+
+	c.Next()
 }
 
 // middlware для проверки доступа к Админ панели
@@ -88,6 +91,17 @@ func (h *Handler) adminIdentify(c *gin.Context) {
 		newErrorMessage(c, http.StatusForbidden, "user not admin")
 		return
 	}
+
+	c.Next()
+}
+
+// middlware ограничение на объём файла
+func (h *Handler) maxFileLimit(c *gin.Context) {
+	// 15 Mb
+	maxBytes := 1024 * 1024 * 15
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, int64(maxBytes))
+
+	c.Next()
 }
 
 // Получения id пользователя из токена

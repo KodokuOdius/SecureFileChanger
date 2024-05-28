@@ -53,6 +53,22 @@ func (h *Handler) infoUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// Объём загруженных файлов
+func (h *Handler) limitUser(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	usedBytes, err := h.services.User.GetUsedBytes(userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{"used_bytes": usedBytes})
+}
+
 // Удаление УЗ Сотрудника
 func (h *Handler) deleteUser(c *gin.Context) {
 	userId, err := getUserId(c)

@@ -56,6 +56,15 @@ func (r *UserRepository) CheckPassword(userId int, password string) (bool, error
 	return ok, err
 }
 
+// Объём загруженных документов
+func (r *UserRepository) GetUsedBytes(userId int) (int, error) {
+	var usedBytes int
+	query := fmt.Sprintf("SELECT sum(size_bytes) FROM %s WHERE user_id=$1", fileTable)
+	err := r.db.Get(&usedBytes, query, userId)
+
+	return usedBytes, err
+}
+
 // Проверка доступа
 func (r *UserRepository) IsApproved(userId int) (bool, error) {
 	var isApproved bool

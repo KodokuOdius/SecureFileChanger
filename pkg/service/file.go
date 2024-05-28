@@ -58,8 +58,8 @@ func (s *FileService) GetByName(fileName string, folderId, userId int) (int, err
 }
 
 // Список документов в директории
-func (s *FileService) GetFilesInFolder(userId int, folderId *int) ([]securefilechanger.File, error) {
-	return s.repo.GetFilesInFolder(userId, *folderId)
+func (s *FileService) GetFilesInFolder(userId int, folderId int) ([]securefilechanger.File, error) {
+	return s.repo.GetFilesInFolder(userId, folderId)
 }
 
 // Получение документов по id

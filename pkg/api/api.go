@@ -36,6 +36,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 			users.DELETE("/delete", h.deleteUser)
 			users.PUT("/update", h.updateUser)
 			users.GET("/info", h.infoUser)
+			users.GET("/limit", h.limitUser)
 			users.POST("/new-password", h.newPassword)
 		}
 
@@ -52,8 +53,9 @@ func (h *Handler) InitRouter() *gin.Engine {
 		files := api.Group("/file", h.userIdentity, h.userCheckApprove)
 		{
 			// create file
-			files.POST("/upload", h.uploadFile)
+			files.POST("/upload", h.maxFileLimit, h.uploadFile)
 			files.GET("/download/:file_id", h.downloadFile)
+			files.GET("/list", h.getFilesInRoot)
 			files.POST("/download-many", h.downloadManyFiles)
 			files.DELETE("/:file_id", h.deleteFile)
 			files.PUT("update/:file_id", h.updateFile)

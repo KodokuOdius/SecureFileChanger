@@ -37,7 +37,7 @@ func (h *Handler) getFilesInFolder(c *gin.Context) {
 		return
 	}
 
-	files, err := h.services.File.GetFilesInFolder(userId, &folderId)
+	files, err := h.services.File.GetFilesInFolder(userId, folderId)
 	if err != nil {
 		logrus.Infoln("[GetFilesInFolder]")
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
@@ -86,11 +86,17 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	defer srcFile.Close()
 
 	c.Writer.Header().Set("Content-Type", "application/x-www-form-urlencoded")
-	// 10 MB
-	err = c.Request.ParseMultipartForm(10 << 20)
+
+	usedBytes, err := h.services.User.GetUsedBytes(userId)
 	if err != nil {
-		logrus.Infoln("[ParseMultipartForm]")
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// 5Gb
+	userLimit := 1024 * 1024 * 1024 * 5
+	if int(handler.Size)+usedBytes > userLimit {
+		newErrorMessage(c, http.StatusBadRequest, "exceeded limit (5Gb)")
 		return
 	}
 
@@ -249,4 +255,26 @@ func (h *Handler) updateFile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
+}
+
+// Список документов в корневой директории
+func (h *Handler) getFilesInRoot(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+
+	rootId, err := h.services.Folder.GetRoot(userId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	files, err := h.services.File.GetFilesInFolder(userId, rootId)
+	if err != nil {
+		newErrorMessage(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, filesList{Data: files})
 }

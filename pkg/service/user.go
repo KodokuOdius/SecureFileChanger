@@ -61,6 +61,11 @@ func (s *UserService) NewPassword(userId int, changePass securefilechanger.Chang
 	return s.repo.NewPassword(userId, changePass)
 }
 
+// Объём загруженных документов
+func (s *UserService) GetUsedBytes(userId int) (int, error) {
+	return s.repo.GetUsedBytes(userId)
+}
+
 // Проверка на доступ
 func (s *UserService) IsApproved(userId int) (bool, error) {
 	return s.repo.IsApproved(userId)
