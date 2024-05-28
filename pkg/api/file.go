@@ -85,6 +85,12 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	}
 	defer srcFile.Close()
 
+	fileExtension := strings.ToLower(filepath.Ext(handler.Filename))
+	if !securefilechanger.IsAsseptedExtension(fileExtension) {
+		newErrorMessage(c, http.StatusBadRequest, fmt.Sprintf("file extension %s does not support", fileExtension))
+		return
+	}
+
 	c.Writer.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 
 	usedBytes, err := h.services.User.GetUsedBytes(userId)
@@ -138,7 +144,6 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	// Создание директорий
 	_ = os.MkdirAll(path, os.ModePerm)
 
-	fileExtension := strings.ToLower(filepath.Ext(handler.Filename))
 	metaFile := securefilechanger.File{
 		Name:      strings.ReplaceAll(handler.Filename, fileExtension, ""),
 		Path:      path,

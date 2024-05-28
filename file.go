@@ -1,6 +1,8 @@
 package securefilechanger
 
-import "errors"
+import (
+	"errors"
+)
 
 type File struct {
 	Id        int    `json:"file_id" db:"id"`
@@ -40,4 +42,19 @@ func (u UpdateFolder) Validate() error {
 	}
 
 	return nil
+}
+
+func IsAsseptedExtension(fileExt string) bool {
+	asseptedExtensions := []string{
+		".doc", ".docx", ".pdf", ".xls",
+		".csv", ".ppt", ".txt", ".rtf",
+		".tiff", ".pptx",
+	}
+
+	for _, ext := range asseptedExtensions {
+		if ext == fileExt {
+			return true
+		}
+	}
+	return false
 }
