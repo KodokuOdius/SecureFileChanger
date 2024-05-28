@@ -158,7 +158,6 @@ func (h *Handler) uploadFile(c *gin.Context) {
 		return
 	}
 
-	// fileExtension
 	fullPath := path + fmt.Sprintf("/document%d", fileId)
 	dstFile, err := h.services.File.FileEncrypt(fullPath, srcFile)
 	if err != nil {
