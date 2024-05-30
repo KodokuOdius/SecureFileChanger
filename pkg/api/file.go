@@ -11,6 +11,7 @@ import (
 
 	securefilechanger "github.com/KodokuOdius/SecureFileChanger"
 	"github.com/gin-gonic/gin"
+	"github.com/mdigger/translit"
 	"github.com/sirupsen/logrus"
 )
 
@@ -194,6 +195,7 @@ func (h *Handler) downloadFile(c *gin.Context) {
 		return
 	}
 
+	logrus.Info("[downloadFile] ", file)
 	h.DownloadOneFile(c, file)
 
 	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
@@ -218,8 +220,10 @@ func (h *Handler) DownloadOneFile(c *gin.Context, file securefilechanger.File) {
 		return
 	}
 
-	c.Writer.Header().Set("Content-Type", "application/%s"+strings.ReplaceAll(file.Type, ".", ""))
-	c.Writer.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(file.Name+file.Type))
+	filename := filepath.Base(file.Name + file.Type)
+	attachment := fmt.Sprintf(`attachment; filename="%s"`, translit.Ru(filename))
+	c.Writer.Header().Set("Content-Disposition", attachment)
+	c.Writer.Header().Set("Content-Type", "application/"+strings.ReplaceAll(file.Type, ".", ""))
 
 	_, err = io.Copy(c.Writer, reader)
 	if err != nil {

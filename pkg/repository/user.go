@@ -59,7 +59,7 @@ func (r *UserRepository) CheckPassword(userId int, password string) (bool, error
 // Объём загруженных документов
 func (r *UserRepository) GetUsedBytes(userId int) (int, error) {
 	var usedBytes int
-	query := fmt.Sprintf("SELECT sum(size_bytes) FROM %s WHERE user_id=$1", fileTable)
+	query := fmt.Sprintf("SELECT COALESCE(SUM(size_bytes), 0) FROM %s WHERE user_id=$1", fileTable)
 	err := r.db.Get(&usedBytes, query, userId)
 
 	return usedBytes, err

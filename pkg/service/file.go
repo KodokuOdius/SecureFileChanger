@@ -26,7 +26,7 @@ func NewFileService(repo repository.File) *FileService {
 
 // Создание нового документа
 func (s *FileService) Create(userId int, metaFile securefilechanger.File) (int, error) {
-	fileId, err := s.GetByName(metaFile.Name, metaFile.FolderId, userId)
+	fileId, err := s.GetByName(metaFile.Name, metaFile.Type, metaFile.FolderId, userId)
 	if fileId != 0 {
 		return 0, errors.New("file already exists")
 	}
@@ -53,8 +53,8 @@ func (s *FileService) GetById(fileId, userId int) (securefilechanger.File, error
 }
 
 // Получение документо по имени
-func (s *FileService) GetByName(fileName string, folderId, userId int) (int, error) {
-	return s.repo.GetByName(fileName, folderId, userId)
+func (s *FileService) GetByName(fileName, fileType string, folderId, userId int) (int, error) {
+	return s.repo.GetByName(fileName, fileType, folderId, userId)
 }
 
 // Список документов в директории

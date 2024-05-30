@@ -57,10 +57,10 @@ func (r *FileRepository) GetById(fileId, userId int) (securefilechanger.File, er
 }
 
 // Получение документа по имени
-func (r *FileRepository) GetByName(fileName string, folderId, userId int) (int, error) {
+func (r *FileRepository) GetByName(fileName, fileType string, folderId, userId int) (int, error) {
 	var id int
-	query := fmt.Sprintf("SELECT id FROM %s WHERE user_id=$1 AND folder_id=$2 AND name=$3", fileTable)
-	err := r.db.Get(&id, query, userId, folderId, fileName)
+	query := fmt.Sprintf("SELECT id FROM %s WHERE user_id=$1 AND folder_id=$2 AND name=$3 AND type=$4", fileTable)
+	err := r.db.Get(&id, query, userId, folderId, fileName, fileType)
 
 	if err == sql.ErrNoRows {
 		return id, nil

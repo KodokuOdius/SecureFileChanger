@@ -38,7 +38,7 @@ type File interface {
 	Delete(fileId, userId int) error
 	FileEncrypt(fileName string, inputFile io.Reader) (string, error)
 	FileDencrypt(key string, encfileName string) (*cipher.StreamReader, *os.File, error)
-	GetByName(fileName string, folderId, userId int) (int, error)
+	GetByName(fileName, fileType string, folderId, userId int) (int, error)
 	GetById(fileId, userId int) (securefilechanger.File, error)
 	GetFilesByIds(userId int, fileIds []int) ([]securefilechanger.File, error)
 }
