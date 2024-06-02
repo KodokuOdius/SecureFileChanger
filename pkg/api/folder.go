@@ -30,8 +30,9 @@ func (h *Handler) createFolder(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"folder_id":   id,
+		"id":          id,
 		"folder_name": input.Name,
+		"is_root":     false,
 	})
 }
 

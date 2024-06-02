@@ -1,6 +1,9 @@
 package securefilechanger
 
-import "errors"
+import (
+	"errors"
+	"net/mail"
+)
 
 type User struct {
 	Id         int     `json:"id" db:"id"`
@@ -27,12 +30,6 @@ type ChangePass struct {
 	NewPass string `json:"new_password"`
 }
 
-// Структура для авторизации и регистрации
-type AuthInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 func (c ChangePass) Validate() error {
 	if c.NewPass == "" || c.OldPass == "" {
 		return errors.New("no change data")
@@ -43,6 +40,21 @@ func (c ChangePass) Validate() error {
 	}
 
 	return nil
+}
+
+// Структура для авторизации и регистрации
+type AuthInput struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func (a AuthInput) Validate() error {
+	if len(a.Password) < 8 {
+		return errors.New("password is less 8 letters")
+	}
+
+	_, err := mail.ParseAddress(a.Email)
+	return err
 }
 
 // Структура для изменения Сотрудника

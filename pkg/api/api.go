@@ -19,6 +19,7 @@ func (h *Handler) InitRouter() *gin.Engine {
 	router := gin.New()
 
 	router.Use(h.logMiddleware)
+	router.Use(h.CORSMiddleware)
 	api := router.Group("/api")
 	{
 		api.GET("/admin-exists", h.adminExist)

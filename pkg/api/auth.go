@@ -17,6 +17,11 @@ func (h *Handler) register(c *gin.Context) {
 		return
 	}
 
+	if err := input.Validate(); err != nil {
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	// Create user
 	user := securefilechanger.User{
 		Email:    input.Email,
@@ -44,9 +49,14 @@ func (h *Handler) logIn(c *gin.Context) {
 		return
 	}
 
+	if err := input.Validate(); err != nil {
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
 	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
 	if err != nil {
-		newErrorMessage(c, http.StatusUnauthorized, err.Error())
+		newErrorMessage(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
