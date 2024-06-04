@@ -2,8 +2,11 @@ package repository
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 )
 
 // Основные таблицы БД
@@ -37,6 +40,27 @@ func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	path := filepath.Join(".", "schema/000001_init.up.sql")
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	logrus.Info("initalization database")
+	sql := string(content)
+	tx, err := db.Begin()
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	_, err = tx.Exec(sql)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	tx.Commit()
 
 	return db, nil
 }
