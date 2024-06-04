@@ -137,9 +137,9 @@ func (h *Handler) uploadFile(c *gin.Context) {
 
 	var path string
 	if folder.Name == "" {
-		path = filepath.Join(".", fmt.Sprintf("files/user%d", userId))
+		path = filepath.Join(os.Getenv("CLOUD_HOME"), fmt.Sprintf("files/user%d", userId))
 	} else {
-		path = filepath.Join(".", fmt.Sprintf("files/user%d/folder%d", userId, folder.Id))
+		path = filepath.Join(os.Getenv("CLOUD_HOME"), fmt.Sprintf("files/user%d/folder%d", userId, folder.Id))
 	}
 
 	// Создание директорий

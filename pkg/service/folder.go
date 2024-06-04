@@ -66,7 +66,7 @@ func (s *FolderService) Delete(userId, folderId int) error {
 		return err
 	}
 
-	fullPath := filepath.Join(".", fmt.Sprintf("files/user%d/folder%d", userId, folderId))
+	fullPath := filepath.Join(os.Getenv("CLOUD_HOME"), fmt.Sprintf("files/user%d/folder%d", userId, folderId))
 	return os.RemoveAll(fullPath)
 }
 

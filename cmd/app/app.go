@@ -1,6 +1,8 @@
 package main
 
 import (
+	"path/filepath"
+
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -34,6 +36,10 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("Error Init Database: %v", err.Error())
 	}
+
+	os.Setenv("CLOUD_HOME", filepath.Join(os.Getenv("CLOUD_HOME"), "companycloud/"))
+
+	logrus.Info("[app file storage] ", os.Getenv("CLOUD_HOME"))
 
 	repositories := repository.NewRepository(db)
 	services := service.NewService(repositories)

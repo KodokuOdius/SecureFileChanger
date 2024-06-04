@@ -24,6 +24,8 @@ go.work
 .gitconfig
 
 files/
+companycloud/
+
 data/
 
 .env

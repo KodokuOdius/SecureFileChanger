@@ -84,7 +84,7 @@ func (h *Handler) deleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusMovedPermanently, map[string]interface{}{"redirect": "/api/auth/register"})
 
-	path := filepath.Join(".", fmt.Sprintf("files/user%d", userId))
+	path := filepath.Join(os.Getenv("CLOUD_HOME"), fmt.Sprintf("files/user%d", userId))
 
 	go os.RemoveAll(path)
 }

@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
 )
 
 // Основные таблицы БД
@@ -47,7 +46,6 @@ func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
 		return nil, err
 	}
 
-	logrus.Info("initalization database")
 	sql := string(content)
 	tx, err := db.Begin()
 	if err != nil {
