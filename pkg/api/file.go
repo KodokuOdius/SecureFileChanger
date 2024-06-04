@@ -198,7 +198,6 @@ func (h *Handler) downloadFile(c *gin.Context) {
 	logrus.Info("[downloadFile] ", file)
 	h.DownloadOneFile(c, file)
 
-	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }
 
 // Выгрзка одного документа

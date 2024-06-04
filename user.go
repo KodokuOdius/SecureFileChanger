@@ -22,6 +22,7 @@ type UserInfo struct {
 	SurName    *string `json:"surname" db:"surname"`
 	IsAdmin    bool    `json:"is_admin" db:"is_admin"`
 	IsApproved bool    `json:"is_approved" db:"is_approved"`
+	UsedBytes  int     `json:"used_bytes" db:"used_bytes"`
 }
 
 // Структура для смены пароля
@@ -36,7 +37,7 @@ func (c ChangePass) Validate() error {
 	}
 
 	if c.OldPass == c.NewPass {
-		return errors.New("new password equal old password")
+		return errors.New("new password equale old password")
 	}
 
 	return nil

@@ -49,8 +49,6 @@ func (h *Handler) downloadManyFiles(c *gin.Context) {
 		newErrorMessage(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }
 
 // Выгрузка zip архива

@@ -140,6 +140,4 @@ func (h *Handler) downloadFilesUUid(c *gin.Context) {
 			return
 		}
 	}
-
-	c.JSON(http.StatusOK, statusResponce{Status: "ok"})
 }

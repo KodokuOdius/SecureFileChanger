@@ -137,7 +137,14 @@ func (r *UserRepository) SetDisable(userId int) error {
 // Информация о Сотруднике
 func (r *UserRepository) GetInfo(userId int) (securefilechanger.UserInfo, error) {
 	var user securefilechanger.UserInfo
-	query := fmt.Sprintf("SELECT email, name, surname, is_admin, is_approved FROM %s WHERE id=$1", userTable)
+	query := fmt.Sprintf(`
+		SELECT email, c.name name, surname, is_admin, is_approved, COALESCE(SUM(size_bytes), 0) used_bytes
+		FROM %s c LEFT JOIN %s f
+		ON c.id = f.user_id
+		WHERE c.id=$1
+		GROUP BY email, c.name, surname, is_admin, is_approved`,
+		userTable, fileTable,
+	)
 	err := r.db.Get(&user, query, userId)
 
 	return user, err
