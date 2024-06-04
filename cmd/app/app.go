@@ -19,25 +19,31 @@ import (
 )
 
 func main() {
+	os.Setenv("CLOUD_HOME", filepath.Join(os.Getenv("CLOUD_HOME"), "companycloud/"))
+
 	logrus.SetFormatter(new(logrus.JSONFormatter))
+	logrus.AddHook(&securefilechanger.FileLogHook{})
+	logrus.SetReportCaller(true)
 
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("Error Init enviroments: %v", err.Error())
+		logrus.Fatalf("error init enviroments: %v", err.Error())
 	}
 
+	dbPort := os.Getenv("POSTGRES_PORT")
+	if dbPort == "" {
+		dbPort = "5432"
+	}
 	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     "localhost",
-		Port:     "5432",
+		Port:     dbPort,
 		User:     os.Getenv("POSTGRES_USER"),
 		Password: os.Getenv("POSTGRES_PASSWORD"),
 		DBName:   "postgres",
 	})
 
 	if err != nil {
-		logrus.Fatalf("Error Init Database: %v", err.Error())
+		logrus.Fatalf("error init Database: %v", err.Error())
 	}
-
-	os.Setenv("CLOUD_HOME", filepath.Join(os.Getenv("CLOUD_HOME"), "companycloud/"))
 
 	logrus.Info("[app file storage] ", os.Getenv("CLOUD_HOME"))
 
@@ -49,7 +55,7 @@ func main() {
 	go func() {
 		err := server.Run("8080", handlers.InitRouter())
 		if err != nil {
-			logrus.Fatalf("Error Starting server: %v", err)
+			logrus.Fatalf("error starting server: %v", err)
 		}
 	}()
 
@@ -57,13 +63,13 @@ func main() {
 	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
 
 	sig := <-sigChan
-	logrus.Warnf("Stop app with sys call: %v", sig)
+	logrus.Warnf("stop app with sys call: %v", sig)
 
 	if err := server.ShutDown(context.Background()); err != nil {
-		logrus.Errorf("Error while shutdown: %s", err.Error())
+		logrus.Errorf("error while shutdown: %s", err.Error())
 	}
 
 	if err := db.Close(); err != nil {
-		logrus.Errorf("Error while db close: %s", err.Error())
+		logrus.Errorf("error while db close: %s", err.Error())
 	}
 }
