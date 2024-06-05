@@ -167,10 +167,13 @@ func (h *Handler) uploadFile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"msg":       "file upload",
-		"file_path": dstFile,
-		"file_id":   fileId,
-		"folder_id": metaFile.FolderId,
+		"msg":        "file upload",
+		"file_name":  metaFile.Name,
+		"file_type":  metaFile.Type,
+		"file_path":  dstFile,
+		"file_id":    fileId,
+		"folder_id":  metaFile.FolderId,
+		"size_bytes": metaFile.SizeBytes,
 	})
 }
 

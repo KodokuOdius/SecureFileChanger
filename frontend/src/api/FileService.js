@@ -62,15 +62,25 @@ export default class FileService {
         return resp.data
     }
 
-    static async uploadFile(token, file) {
+    static async uploadFile(token, file, folderId) {
         const AuthHeader = {
             headers: {
-                "Authorization": "Bearer " + token
+                "Authorization": "Bearer " + token,
+                "Content-Type": "multipart/form-data"
             }
         }
+
+        const formData = new FormData();
+        formData.append("file", file)
+
+        if (folderId) {
+            formData.append("folder_id", folderId)
+        }
+        console.log(formData)
+
         const url = APIServer.serverHost + APIServer.file.upload
         const resp = await axios.post(
-            url, file, AuthHeader
+            url, formData, AuthHeader
         )
 
         return resp.data

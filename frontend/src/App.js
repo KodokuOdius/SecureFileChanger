@@ -23,7 +23,7 @@ export const APIServer = {
         upload: "/file/upload",
         downloadMany: "/file/download-many",
         download: "/file/download/",
-        delete: "/file/delete/",
+        delete: "/file/",
         update: "/file/update/",
     },
     folder: {

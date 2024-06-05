@@ -39,7 +39,11 @@ const Home = () => {
         console.log(errorFolders)
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const onDeleteFile = (id) => { }
+    const onDeleteFile = (id) => {
+        FileService.deleteFile(token, id)
+
+        setFiles(files.filter(file => file.file_id !== id))
+    }
 
     const addFolder = (folder) => {
         setFolders([...folders, folder])
@@ -51,11 +55,15 @@ const Home = () => {
         setFolders(folders.filter(folder => folder.id !== id))
     }
 
+    const addFile = (file) => {
+        setFiles([...files, file])
+    }
+
     return (
         <div className="home">
             <h1>Главная страница</h1>
             <div className="home__workspace">
-                <HomePanel addFolder={addFolder} />
+                <HomePanel addFolder={addFolder} addFile={addFile} />
                 <div className="home__files">
                     {isFilesLoading && isFoldersLoading &&
                         <Loader msg="Идёт загрузка информации" />
