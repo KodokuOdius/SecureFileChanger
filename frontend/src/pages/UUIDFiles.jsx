@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useAPI } from "../hooks/useAPI";
 import UrlService from "../api/UrlService";
 import Loader from "../components/Loader";
 import FileList from "../components/File/FileList";
-import { APIServer } from "../App";
 
 
 const isValidUUID = (uuid) => {
@@ -19,6 +18,7 @@ const UUIDFiles = () => {
 
     const [isNotFound, setIsNotFound] = useState(false)
     const [files, setFiles] = useState([])
+
     const [getFiles, isLoading,] = useAPI(async () => {
         try {
             const resp = await UrlService.getFiles(uuid)
@@ -35,9 +35,31 @@ const UUIDFiles = () => {
             return () => navigate("/")
         }
         getFiles()
-
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+    const onClickLink = async () => {
+        let resp
+        try {
+            resp = await UrlService.downloadFiles(uuid)
+        } catch (error) {
+            setIsNotFound(true)
+            return
+        }
+
+        const url = window.URL.createObjectURL(new Blob([resp]))
+        const link = document.createElement("a")
+        link.setAttribute("href", url)
+
+        if (files.length === 1) {
+            const file = files[0]
+            link.setAttribute("download", file.file_name + file.file_type)
+        } else {
+            link.setAttribute("download", "archive.zip")
+        }
+        document.body.appendChild(link)
+        link.click()
+        link.parentNode.removeChild(link)
+    }
 
     return (
         <div className="files__uuid">
@@ -51,11 +73,13 @@ const UUIDFiles = () => {
                         ? <div className="notfound__uuid">
                             <p>Ссылка не действительна</p>
                         </div>
-                        : <FileList files={files} />
+                        : <>
+                            <FileList files={files} />
+                            <div className="files__uuid__btn">
+                                <button onClick={onClickLink}>Скачать</button>
+                            </div>
+                        </>
                     }
-                    <div className="files__uuid__btn">
-                        <Link to={APIServer.serverHost + APIServer.url.download + uuid} download >Скачать</Link>
-                    </div>
                 </>
             }
         </div>

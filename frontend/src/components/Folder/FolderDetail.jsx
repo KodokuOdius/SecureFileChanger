@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import FileList from "../File/FileList";
-import { TokenContext } from "../../context";
-import { useParams } from "react-router-dom";
+import { SharedFilesContext, TokenContext, SelectionFilesContext } from "../../context";
+import { useParams, Link } from "react-router-dom";
 import FolderService from "../../api/FolderService";
 import { useAPI } from "../../hooks/useAPI";
 import Loader from "../Loader";
+import HomePanel from "../HomePanel";
 
 
 const FolderDetail = () => {
@@ -21,6 +22,10 @@ const FolderDetail = () => {
         setFiles(filesList)
     })
 
+    const addFile = (file) => {
+        setFiles([...files, file])
+    }
+
     const onDeleteFile = (id) => { }
 
     useEffect(() => {
@@ -28,16 +33,29 @@ const FolderDetail = () => {
         console.log(error)
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+    const [sharedFiles, setSharedFiles] = useState([])
+    const [isShowSelect, setIsShowSelect] = useState(false)
+
     return (
-        <div className="home__files">
-            {isLoading &&
-                <Loader msg="Загрузка документов" />
-            }
-            {files === null || files.length === 0
-                ? <h3>Нет Документов</h3>
-                : <FileList files={files} onDeleteFile={onDeleteFile} />
-            }
-        </div>
+        <SharedFilesContext.Provider value={{ sharedFiles, setSharedFiles }}>
+            <SelectionFilesContext.Provider value={{ isShowSelect, setIsShowSelect }}>
+                <div className="home">
+                    <div className="home__workspace">
+                        <HomePanel addFile={addFile} />
+                        <div className="home__files">
+                            <p><Link to="/">Назад</Link></p>
+                            {isLoading &&
+                                <Loader msg="Загрузка документов" />
+                            }
+                            {files === null || files.length === 0
+                                ? <h3>Нет Документов</h3>
+                                : <FileList files={files} onDeleteFile={onDeleteFile} />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </SelectionFilesContext.Provider>
+        </SharedFilesContext.Provider>
     )
 }
 

@@ -24,14 +24,17 @@ export default class UrlService {
             return ""
         }
 
-        return resp.data.url_hex
+        const resultUrl = window.location.origin + "/d/" + resp.data.url_hex
+        return resultUrl
     }
 
     static async downloadFiles(uuid) {
         const url = APIServer.serverHost + APIServer.url.download
-        const resp = await axios.get(url + uuid)
+        const resp = await axios.get(
+            url + uuid, { responseType: "blob" }
+        )
 
-        return resp
+        return resp.data
     }
 
     static async getFiles(uuid) {

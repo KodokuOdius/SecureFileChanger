@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 //     "is_root": true
 // }
 const FolderItem = ({ idx, folder, onDeleteFolder }) => {
+
     return (
         <div className="folder__item" id={folder.id}>
             <h3>

@@ -21,10 +21,6 @@ const FolderCreateForm = ({ setShow, addFolder }) => {
         setShow(false)
     }
 
-    const closeForm = () => {
-        setShow(false)
-    }
-
     return (
         <form className="folder_create_form">
             <input
@@ -34,7 +30,7 @@ const FolderCreateForm = ({ setShow, addFolder }) => {
                 placeholder="Название директории"
             />
             <button onClick={createFolder}>Создать</button>
-            <button onClick={closeForm}>Закрыть</button>
+            <button onClick={() => setShow(false)}>Закрыть</button>
         </form>
     )
 }

@@ -8,7 +8,6 @@ const FolderList = ({ folders, onDeleteFolder }) => {
         <div className="folder__list">
             {
                 folders.map((folder, i) => {
-                    console.log(folder)
                     return <FolderItem
                         idx={i}
                         folder={folder}

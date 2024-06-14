@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import FileList from "../components/File/FileList";
-import { TokenContext } from "../context";
+import { SharedFilesContext, TokenContext, SelectionFilesContext } from "../context";
 import FolderList from "../components/Folder/FolderList";
 import HomePanel from "../components/HomePanel";
 import FolderService from "../api/FolderService";
@@ -59,27 +59,34 @@ const Home = () => {
         setFiles([...files, file])
     }
 
+    const [sharedFiles, setSharedFiles] = useState([])
+    const [isShowSelect, setIsShowSelect] = useState(false)
+
     return (
-        <div className="home">
-            <h1>Главная страница</h1>
-            <div className="home__workspace">
-                <HomePanel addFolder={addFolder} addFile={addFile} />
-                <div className="home__files">
-                    {isFilesLoading && isFoldersLoading &&
-                        <Loader msg="Идёт загрузка информации" />
-                    }
-                    {files === null || files.length === 0
-                        ? <h3>Нет Документов</h3>
-                        : <FileList files={files} onDeleteFile={onDeleteFile} />
-                    }
-                    <br />
-                    {folders === null || folders.length === 0
-                        ? <></>
-                        : <FolderList folders={folders} onDeleteFolder={onDeleteFolder} />
-                    }
+        <SharedFilesContext.Provider value={{ sharedFiles, setSharedFiles }}>
+            <SelectionFilesContext.Provider value={{ isShowSelect, setIsShowSelect }}>
+                <div className="home">
+                    <div className="home__workspace">
+                        <HomePanel addFolder={addFolder} addFile={addFile} />
+                        <div className="home__files">
+                            <h2>Главная страница</h2>
+                            {isFilesLoading && isFoldersLoading &&
+                                <Loader msg="Идёт загрузка информации" />
+                            }
+                            {files === null || files.length === 0
+                                ? <h3>Нет Документов</h3>
+                                : <FileList files={files} onDeleteFile={onDeleteFile} />
+                            }
+                            <br />
+                            {folders === null || folders.length === 0
+                                ? <></>
+                                : <FolderList folders={folders} onDeleteFolder={onDeleteFolder} />
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </SelectionFilesContext.Provider>
+        </SharedFilesContext.Provider>
     )
 }
 

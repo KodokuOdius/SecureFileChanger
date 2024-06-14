@@ -5,11 +5,11 @@ import Login from "../../pages/Login";
 import Logout from "../../pages/Logout";
 import Profile from "../../pages/Profile";
 import AuthWiddleware from "../CheckAuth";
-import FolderDetail from "../Folder/FolderDetail";
 import Register from "../../pages/Register";
 import RouterNavbar from "./RouterNavbar";
 import AdminPanel from "../../pages/AdminPanel";
 import UUIDFiles from "../../pages/UUIDFiles";
+import FolderDetail from "../Folder/FolderDetail";
 
 
 const Rounter = () => {
