@@ -6,6 +6,8 @@ import { APIServer, humanSizeBytes } from "../App";
 import Loader from "../components/Loader";
 import ChangePass from "../components/User/ChangePass";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 
 const Profile = () => {
@@ -91,65 +93,79 @@ const Profile = () => {
 
     return (
         <div className="user__profile">
-            <h2>Профиль пользователя</h2>
+            {isPassShow &&
+                <ChangePass setIsPassShow={setIsPassShow} />
+            }
+            <h2 className="profile__title">Профиль пользователя</h2>
             <div className="user__info">
                 {isLoading
                     ? <Loader msg="Загрузка ифнормации о профиле" />
-                    : <div className="info__detail">
-                        {userInfo.is_admin &&
-                            <p className="info__value">Администратор</p>
-                        }
-                        <p className="info__value">
-                            Email: {userInfo.email}
-                        </p>
-                        <p className="info__value">
-                            Имя:
-                            <input
-                                type="text"
-                                value={userInfo.name}
-                                disabled={!isUpdateShow}
-                                onChange={e => setUserInfo({ ...userInfo, name: e.target.value })}
-                            />
-                        </p>
-                        <p className="info__value">
-                            Фамилия:
-                            <input
-                                type="text"
-                                value={userInfo.surname}
-                                disabled={!isUpdateShow}
-                                onChange={e => { setUserInfo({ ...userInfo, surname: e.target.value }) }}
-                            />
-                        </p>
-                        <p className="info__value">
-                            Учётная запись {!userInfo.is_approved && "не"} подтверждена
-                        </p>
-                        <p className="info__value">
-                            Использовано памяти: {humanSizeBytes(userInfo.used_bytes)}
-                        </p>
+                    : <div className="profile__detail">
+                        <div className="detail__info">
+                            <div className="profile__icon">
+                                <FontAwesomeIcon icon={faUser} size="6x" />
+                            </div>
+                            {userInfo.is_admin &&
+                                <p className="info__value">Администратор</p>
+                            }
+                            <p className="info__value">
+                                Учётная запись {!userInfo.is_approved && "не"} подтверждена
+                            </p>
+                            <p className="info__value">
+                                Использовано памяти: {humanSizeBytes(userInfo.used_bytes)}
+                            </p>
+                        </div>
+                        <div className="user__detail">
+                            <div className="user__values">
+                                <p className="info__value">
+                                    <span>Email: </span>
+                                    <input
+                                        type="text"
+                                        value={userInfo.email}
+                                        disabled={true}
+                                    />
+                                </p>
+                                <p className="info__value">
+                                    <span>Имя: </span>
+                                    <input
+                                        type="text"
+                                        value={userInfo.name}
+                                        disabled={!isUpdateShow}
+                                        onChange={e => setUserInfo({ ...userInfo, name: e.target.value })}
+                                    />
+                                </p>
+                                <p className="info__value">
+                                    <span>Фамилия: </span>
+                                    <input
+                                        type="text"
+                                        value={userInfo.surname}
+                                        disabled={!isUpdateShow}
+                                        onChange={e => { setUserInfo({ ...userInfo, surname: e.target.value }) }}
+                                    />
+                                </p>
+                            </div>
+                            <div className="profile__btns">
+                                {isUpdateShow &&
+                                    <button onClick={onSaveUpdate}>Сохранить</button>
+                                }
+                                <button onClick={toggleShowUpdatePanel}>
+                                    {isUpdateShow ? "Отменить" : "Редактировать"}
+                                </button>
+                                {!isUpdateShow &&
+                                    <>
+                                        <button onClick={onChangePassword}>Сменить пароль</button>
+                                        {!userInfo.is_admin
+                                            ? <button onClick={onDeleteUser}>Удалить</button>
+                                            : <button onClick={onAdminPanel}>Список сотрудников</button>
+                                        }
+                                    </>
+                                }
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
-
-            <h3>Кнопки для провиля</h3>
-            <div className="profile__btns">
-                <button onClick={toggleShowUpdatePanel}>
-                    {isUpdateShow ? "Отменить" : "Редактировать"}
-                </button>
-                {isUpdateShow
-                    ? <button onClick={onSaveUpdate}>Сохранить</button>
-                    : <>
-                        <button onClick={onChangePassword}>Сменить пароль</button>
-                        {isPassShow &&
-                            <ChangePass setIsPassShow={setIsPassShow} />
-                        }
-                        {!userInfo.is_admin
-                            ? <button onClick={onDeleteUser}>Удалить</button>
-                            : <button onClick={onAdminPanel}>Список сотрудников</button>
-                        }
-                    </>
-                }
-            </div>
-        </div>
+        </div >
     )
 }
 export default Profile

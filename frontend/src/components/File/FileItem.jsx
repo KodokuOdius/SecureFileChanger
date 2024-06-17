@@ -85,7 +85,7 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
                     <p className="file__icon">
                         {FilesIcons[file.file_type.replace(".", "")] !== ""
                             ? <FontAwesomeIcon icon={FilesIcons[file.file_type.replace(".", "")]} size="xl" />
-                            : <FontAwesomeIcon icon={FilesIcons["txt"]} size="xl" />
+                            : <FontAwesomeIcon icon={FilesIcons["file"]} size="xl" />
                         }
                     </p>
                     <input autoFocus
@@ -105,29 +105,27 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
                     <p>{humanSizeBytes(file.size_bytes)}</p>
                 </div>
             </div>
-            <div className="item__btns">
-                {isShowSelect &&
-                    <div className="item__checking">
-                        <input
-                            type="checkbox"
-                            onChange={onCheckBox}
-                        />
-                    </div>
-                }
-                {onDeleteFile &&
-                    <>
-                        <DownloadBtn onClick={onDownloadFile} />
-                        {isEdit &&
-                            <SaveBtn onClick={onSaveName} />
-                        }
-                        {!isEdit
-                            ? <ChangeBtn onClick={onToggleEditFile} />
-                            : <CancelBtn onClick={onToggleEditFile} />
-                        }
-                        <DeleteBtn onClick={() => onDeleteFile(file.file_id)} />
-                    </>
-                }
-            </div>
+            {onDeleteFile &&
+                <div className="item__btns">
+                    {isShowSelect &&
+                        <div className="item__checking">
+                            <input
+                                type="checkbox"
+                                onChange={onCheckBox}
+                            />
+                        </div>
+                    }
+                    <DownloadBtn onClick={onDownloadFile} />
+                    {isEdit &&
+                        <SaveBtn onClick={onSaveName} />
+                    }
+                    {!isEdit
+                        ? <ChangeBtn onClick={onToggleEditFile} />
+                        : <CancelBtn onClick={onToggleEditFile} />
+                    }
+                    <DeleteBtn onClick={() => onDeleteFile(file.file_id)} />
+                </div>
+            }
         </div>
     )
 }

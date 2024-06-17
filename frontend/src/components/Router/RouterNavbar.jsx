@@ -10,27 +10,35 @@ const RouterNavbar = ({ isLoginShow }) => {
         return <></>
     }
 
+    if (location.pathname.includes("/d/")) {
+        return <></>
+    }
+
     return (
         <nav className="router__navbar">
-            <h2 className="router__logo">CloudCompany</h2>
-            <ul className="navbar__links">
-                <li className="links__item">
-                    <Link to="/">Домашнаяя страница</Link>
-                </li>
-                <li className="links__item">
-                    <Link to="/profile">Профиль</Link>
-                </li>
-                {isLoginShow &&
+            <div className="navbar__list">
+                <h2 className="router__logo">
+                    <Link to="/">CloudCompany</Link>
+                </h2>
+                <ul className="navbar__links">
                     <li className="links__item">
-                        <Link to="/login">Войти</Link>
+                        <Link to="/">Домашнаяя страница</Link>
                     </li>
-                }
-                {!isLoginShow &&
                     <li className="links__item">
-                        <Link to="/logout">Выйти</Link>
+                        <Link to="/profile">Профиль</Link>
                     </li>
-                }
-            </ul>
+                    {isLoginShow &&
+                        <li className="links__item">
+                            <Link to="/login">Войти</Link>
+                        </li>
+                    }
+                    {!isLoginShow &&
+                        <li className="links__item">
+                            <Link to="/logout">Выйти</Link>
+                        </li>
+                    }
+                </ul>
+            </div>
         </nav>
     )
 }

@@ -17,7 +17,7 @@ const Rounter = () => {
 
     return (
         <BrowserRouter>
-            <div>
+            <div className="nav__roter">
                 <RouterNavbar isLoginShow={isLoginShow} />
                 <Routes>
                     <Route path="/login" element={<Login setIsLoginShow={setIsLoginShow} />} />
@@ -41,7 +41,6 @@ const Rounter = () => {
                             <AdminPanel />
                         </AuthWiddleware>
                     } />
-                    {/* HomePage */}
                     <Route path="/" element={
                         <AuthWiddleware>
                             <Home />

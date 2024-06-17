@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import UserService from "../../api/UserService";
 import { TokenContext } from "../../context";
 import { useAPI } from "../../hooks/useAPI";
@@ -6,6 +6,8 @@ import { useAPI } from "../../hooks/useAPI";
 
 const ChangePass = ({ setIsPassShow }) => {
     const { token } = useContext(TokenContext)
+
+    const mainDiv = useRef()
 
     const defaultPasswords = { old_password: "", new_pasword: "" }
     const [passwords, setPasswords] = useState(defaultPasswords)
@@ -37,27 +39,45 @@ const ChangePass = ({ setIsPassShow }) => {
         }
     }
 
+    const onModalClick = (e) => {
+        if (e.target === mainDiv.current) {
+            cancel(e)
+        }
+    }
+
     return (
-        <form method="post" className="change__pass">
-            <input
-                type="password"
-                placeholder="Старый пароль"
-                value={passwords.old_password}
-                onChange={e => setPasswords({ ...passwords, old_password: e.target.value })}
-            />
-
-            <input
-                type="password"
-                placeholder="Новый пароль"
-                value={passwords.new_pasword}
-                onChange={e => setPasswords({ ...passwords, new_pasword: e.target.value })}
-            />
-
-            <div className="form__btns">
-                <button onClick={change}>Изменить</button>
-                <button onClick={cancel}>Отменить</button>
-            </div>
-        </form>
+        <div className="change__password" ref={mainDiv} onClick={onModalClick} >
+            <form method="post" className="change__pass">
+                <div className="pass__inp">
+                    <div className="inp__item">
+                        <p>Введите старый пароль</p>
+                        <input
+                            type="password"
+                            placeholder="Старый пароль"
+                            value={passwords.old_password}
+                            minLength={1}
+                            maxLength={100}
+                            onChange={e => setPasswords({ ...passwords, old_password: e.target.value })}
+                        />
+                    </div>
+                    <div className="inp__item">
+                        <p>Введите новый пароль</p>
+                        <input
+                            type="password"
+                            placeholder="Новый пароль"
+                            minLength={1}
+                            maxLength={100}
+                            value={passwords.new_pasword}
+                            onChange={e => setPasswords({ ...passwords, new_pasword: e.target.value })}
+                        />
+                    </div>
+                </div>
+                <div className="form__btns">
+                    <button onClick={change}>Изменить</button>
+                    <button onClick={cancel}>Отменить</button>
+                </div>
+            </form>
+        </div>
     )
 }
 export default ChangePass

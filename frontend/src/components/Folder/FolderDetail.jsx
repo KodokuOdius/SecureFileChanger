@@ -7,6 +7,8 @@ import { useAPI } from "../../hooks/useAPI";
 import Loader from "../Loader";
 import HomePanel from "../HomePanel";
 import FileService from "../../api/FileService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBackward } from "@fortawesome/free-solid-svg-icons";
 
 
 const FolderDetail = () => {
@@ -45,10 +47,17 @@ const FolderDetail = () => {
         <SharedFilesContext.Provider value={{ sharedFiles, setSharedFiles }}>
             <SelectionFilesContext.Provider value={{ isShowSelect, setIsShowSelect }}>
                 <div className="home">
+                    <HomePanel addFile={addFile} />
                     <div className="home__workspace">
-                        <HomePanel addFile={addFile} />
+                        <h2 className="folder__back">
+                            <Link to="/">
+                                <p className="back__icon">
+                                    <FontAwesomeIcon icon={faBackward} size="x" />
+                                </p>
+                                <span>Назад</span>
+                            </Link>
+                        </h2>
                         <div className="home__files">
-                            <p><Link to="/">Назад</Link></p>
                             {isLoading &&
                                 <Loader msg="Загрузка документов" />
                             }

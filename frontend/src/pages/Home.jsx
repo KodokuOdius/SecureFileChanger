@@ -77,7 +77,7 @@ const Home = () => {
                         </div>
                         <div className="home__files">
                             {isFilesLoading && isFoldersLoading &&
-                                <Loader msg="Идёт загрузка информации" />
+                                <Loader msg="Загрузка документов" />
                             }
                             {files === null || files.length === 0
                                 ? <h3>Нет Документов</h3>

@@ -4,6 +4,7 @@ import { useAPI } from "../hooks/useAPI";
 import UrlService from "../api/UrlService";
 import Loader from "../components/Loader";
 import FileList from "../components/File/FileList";
+import DownloadBtn from "../components/Buttons/DownloadBtn";
 
 
 const isValidUUID = (uuid) => {
@@ -63,6 +64,7 @@ const UUIDFiles = () => {
 
     return (
         <div className="files__uuid">
+            <h3 className="uuid__title" >Список документов</h3>
             {!isValidUUID(uuid) &&
                 <Navigate to="/" />
             }
@@ -73,12 +75,16 @@ const UUIDFiles = () => {
                         ? <div className="notfound__uuid">
                             <p>Ссылка не действительна</p>
                         </div>
-                        : <>
+                        : <div className="uuid__workspace">
                             <FileList files={files} />
                             <div className="files__uuid__btns">
-                                <button onClick={onClickLink}>Скачать</button>
+                                <button onClick={onClickLink}>
+                                    <DownloadBtn />
+                                    <span>Скачать</span>
+                                    <DownloadBtn />
+                                </button>
                             </div>
-                        </>
+                        </div>
                     }
                 </>
             }

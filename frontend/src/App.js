@@ -3,9 +3,9 @@ import './styles/App.css'
 import Rounter from './components/Router/Router';
 import { TokenContext } from './context';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText } from "@fortawesome/free-solid-svg-icons";
+import { faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText, faFile } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText)
+library.add(faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText, faFile)
 
 export const FilesIcons = {
     "pdf": faFilePdf,
@@ -13,7 +13,8 @@ export const FilesIcons = {
     "doc": faFileWord,
     "docx": faFileWord,
     "pptx": faFilePowerpoint,
-    "txt": faFileText
+    "txt": faFileText,
+    "file": faFile
 }
 
 export const APIServer = {

@@ -56,8 +56,8 @@ const Login = ({ setIsLoginShow }) => {
 
     return (
         <div className="login__form">
-            <h1>Форма авторизации</h1>
-            <div className="register__inp">
+            <h2 className="login__title" >Форма авторизации</h2>
+            <div className="login__inp">
                 {errorMsg !== ""
                     ? <div className="error_msg">
                         <p>{errorMsg}</p>
@@ -65,28 +65,39 @@ const Login = ({ setIsLoginShow }) => {
                     : <></>
                 }
                 <form method="post">
-                    <input
-                        required
-                        value={loginForm.email}
-                        id="email"
-                        type="email"
-                        placeholder="Введите свой email"
-                        onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
-                    />
-                    <input
-                        required
-                        value={loginForm.password}
-                        id="password"
-                        type="password"
-                        minLength={8}
-                        placeholder="Введите свой пароль"
-                        onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
-                    />
+                    <div className="inp__item">
+                        <p className="item__title">Введите email</p>
+                        <input
+                            required
+                            value={loginForm.email}
+                            id="email"
+                            type="email"
+                            minLength={1}
+                            maxLength={100}
+                            placeholder="Email"
+                            onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
+                        />
+                    </div>
+                    <div className="inp__item">
+                        <p className="item__title">Введите пароль</p>
+                        <input
+                            required
+                            value={loginForm.password}
+                            id="password"
+                            type="password"
+                            minLength={8}
+                            maxLength={100}
+                            placeholder="Пароль"
+                            onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+                        />
+                    </div>
                 </form>
             </div>
             <div className="login__btns">
                 <button onClick={autherization}>Войти</button>
-                <Link to="/register">Зарагестрироваться</Link>
+                <p>
+                    <Link to="/register">Зарагестрироваться</Link>
+                </p>
             </div>
         </div>
     )

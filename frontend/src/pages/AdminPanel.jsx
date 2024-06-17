@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import UserList from "../components/User/UserList";
 import AdminService from "../api/AdminService";
 import { useNavigate } from "react-router-dom";
+import SearchBtn from "../components/Buttons/SearchBtn";
 
 
 const AdminPanel = () => {
@@ -42,14 +43,16 @@ const AdminPanel = () => {
         <div className="users__page">
             {!isLoading &&
                 <div className="list__search">
-                    <h2>Поисковая строка</h2>
-                    <input
-                        type="text"
-                        value={searchEmailChange}
-                        placeholder="Введите email Сотрудника"
-                        onChange={e => setSearchEmailChange(e.target.value)}
-                    />
-                    <button onClick={onSearch} >Поиск</button>
+                    <h3 className="search__title" >Поиск сотрудников</h3>
+                    <div className="search__inp">
+                        <input
+                            type="text"
+                            value={searchEmailChange}
+                            placeholder="Введите email Сотрудника"
+                            onChange={e => setSearchEmailChange(e.target.value)}
+                        />
+                        <SearchBtn onClick={onSearch} />
+                    </div>
                 </div>
             }
             {isLoading &&

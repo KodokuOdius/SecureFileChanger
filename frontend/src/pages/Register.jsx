@@ -58,7 +58,7 @@ const Register = () => {
 
     return (
         <div className="register__form">
-            <h1>Форма регистрации</h1>
+            <h2 className="register__title">Форма регистрации</h2>
             <div className="register__inp">
                 {errorMsg !== "" &&
                     <div className="error__msg">
@@ -71,32 +71,43 @@ const Register = () => {
                     </div>
                 }
                 <form method="post">
-                    <input
-                        required
-                        value={regData.email}
-                        id="email"
-                        type="email"
-                        placeholder="Введите свой email"
-                        onChange={e => setRegData({ ...regData, email: e.target.value })}
-                        disabled={isSuccsess}
-                    />
-                    <input
-                        required
-                        value={regData.password}
-                        id="password"
-                        type="password"
-                        minLength={8}
-                        placeholder="Введите свой пароль"
-                        onChange={e => setRegData({ ...regData, password: e.target.value })}
-                        disabled={isSuccsess}
-                    />
+                    <div className="inp__item">
+                        <p className="item__title">Введите email</p>
+                        <input
+                            required
+                            value={regData.email}
+                            id="email"
+                            type="email"
+                            minLength={1}
+                            maxLength={100}
+                            placeholder="Email"
+                            onChange={e => setRegData({ ...regData, email: e.target.value })}
+                            disabled={isSuccsess}
+                        />
+                    </div>
+                    <div className="inp__item">
+                        <p className="item__title">Введите пароль</p>
+                        <input
+                            required
+                            value={regData.password}
+                            id="password"
+                            type="password"
+                            minLength={8}
+                            maxLength={100}
+                            placeholder="Пароль"
+                            onChange={e => setRegData({ ...regData, password: e.target.value })}
+                            disabled={isSuccsess}
+                        />
+                    </div>
                 </form>
             </div>
-            <div className="register__form">
+            <div className="register__btns">
                 {!isSuccsess &&
                     <button onClick={registration}>Зарагестрироваться</button>
                 }
-                <Link to="/login">Войти</Link>
+                <p>
+                    <Link to="/login">Войти</Link>
+                </p>
             </div>
         </div>
     )

@@ -33,17 +33,19 @@ const UserItem = ({ idx, user }) => {
 
     return (
         <div className="user__item">
-            <p>{idx}# Email: {user.email}</p>
-            <p className="user__approved">
-                <label className="user__switch">
-                    <input
-                        type="checkbox"
-                        checked={isApproved}
-                        onChange={onToggleApprove}
-                    />
-                    <span className="user__slider"></span>
-                </label>
-            </p>
+            <div className="user__info">
+                <p className="item__email">Email: {user.email}</p>
+                <p className="user__approved">
+                    <label className="user__switch">
+                        <input
+                            type="checkbox"
+                            checked={isApproved}
+                            onChange={onToggleApprove}
+                        />
+                        <span className="user__slider"></span>
+                    </label>
+                </p>
+            </div>
         </div>
     )
 }
