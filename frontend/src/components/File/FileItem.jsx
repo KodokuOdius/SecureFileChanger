@@ -1,8 +1,14 @@
-import React, { useContext, useState } from "react";
-import { humanSizeBytes } from "../../App";
+import React, { useContext, useRef, useState } from "react";
+import { FilesIcons, humanSizeBytes } from "../../App";
 import { SelectionFilesContext, SharedFilesContext, TokenContext } from "../../context";
 import FileService from "../../api/FileService";
 import { useAPI } from "../../hooks/useAPI";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import DeleteBtn from "../Buttons/DeleteBtn";
+import DownloadBtn from "../Buttons/DownloadBtn";
+import CancelBtn from "../Buttons/CancelBtn";
+import SaveBtn from "../Buttons/SaveBtn";
+import ChangeBtn from "../Buttons/ChangeBtn";
 
 
 // defaultFileInput = {
@@ -13,6 +19,8 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
     const { token } = useContext(TokenContext)
     const { isShowSelect } = useContext(SelectionFilesContext)
     const { sharedFiles, setSharedFiles } = useContext(SharedFilesContext)
+
+    const fileName = useRef()
 
     const [fileData, setFileData] = useState({ ...file, old_name: file.file_name })
     const [isEdit, setIsEdit] = useState(false)
@@ -30,6 +38,8 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
     }
 
     const onToggleEditFile = (e) => {
+        fileName.current.focus()
+
         if (isEdit) {
             setFileData({ ...fileData, file_name: fileData.old_name })
         }
@@ -57,46 +67,67 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
 
     const onCheckBox = (e) => {
         if (e.target.checked) {
-            setSharedFiles([...sharedFiles, file.file_id])
+            setSharedFiles([...sharedFiles, file])
             return
         }
 
-        setSharedFiles(sharedFiles.filter(fileId => fileId !== file.file_id))
+        setSharedFiles(sharedFiles.filter(f => f.file_id !== file.file_id))
+    }
+
+    const onChangeName = (e) => {
+        setFileData({ ...fileData, file_name: e.target.value })
     }
 
     return (
         <div className="file__item" id={file.file_id}>
-            <h4>
-                <input
-                    className="file__item__inp"
-                    type="text"
-                    disabled={!isEdit}
-                    value={fileData.file_name}
-                    onChange={e => setFileData({ ...fileData, file_name: e.target.value })}
-                />
-                <span>{file.file_type}</span>
-            </h4>
-            <p>{humanSizeBytes(file.size_bytes)}</p>
-            {onDeleteFile &&
-                <>
-                    <button onClick={() => onDeleteFile(file.file_id)}>Удалить</button>
-                    <button onClick={onDownloadFile}>Скачать</button>
-                    <button onClick={onToggleEditFile}>
-                        {!isEdit ? "Изменить" : "Отмена"}
-                    </button>
-                    {isEdit
-                        && <button onClick={onSaveName}>Сохранить</button>
-                    }
-                </>
-            }
-            {isShowSelect &&
-                <div className="file__checking">
-                    <input
-                        type="checkbox"
-                        onChange={onCheckBox}
+            <div className="item__name">
+                <div className="file__name">
+                    <p className="file__icon">
+                        {FilesIcons[file.file_type.replace(".", "")] !== ""
+                            ? <FontAwesomeIcon icon={FilesIcons[file.file_type.replace(".", "")]} size="xl" />
+                            : <FontAwesomeIcon icon={FilesIcons["txt"]} size="xl" />
+                        }
+                    </p>
+                    <input autoFocus
+                        ref={fileName}
+                        className="item__inp"
+                        type="text"
+                        disabled={!isEdit}
+                        value={fileData.file_name}
+                        onChange={onChangeName}
+                        minLength={1}
+                        maxLength={100}
+                        size={fileData.file_name.length}
                     />
                 </div>
-            }
+                <div className="item__info">
+                    <p>Type: {file.file_type.replace(".", "")}</p>
+                    <p>{humanSizeBytes(file.size_bytes)}</p>
+                </div>
+            </div>
+            <div className="item__btns">
+                {isShowSelect &&
+                    <div className="item__checking">
+                        <input
+                            type="checkbox"
+                            onChange={onCheckBox}
+                        />
+                    </div>
+                }
+                {onDeleteFile &&
+                    <>
+                        <DownloadBtn onClick={onDownloadFile} />
+                        {isEdit &&
+                            <SaveBtn onClick={onSaveName} />
+                        }
+                        {!isEdit
+                            ? <ChangeBtn onClick={onToggleEditFile} />
+                            : <CancelBtn onClick={onToggleEditFile} />
+                        }
+                        <DeleteBtn onClick={() => onDeleteFile(file.file_id)} />
+                    </>
+                }
+            </div>
         </div>
     )
 }

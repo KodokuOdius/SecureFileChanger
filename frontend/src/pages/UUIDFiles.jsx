@@ -75,7 +75,7 @@ const UUIDFiles = () => {
                         </div>
                         : <>
                             <FileList files={files} />
-                            <div className="files__uuid__btn">
+                            <div className="files__uuid__btns">
                                 <button onClick={onClickLink}>Скачать</button>
                             </div>
                         </>

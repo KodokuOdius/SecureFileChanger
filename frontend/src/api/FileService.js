@@ -76,7 +76,6 @@ export default class FileService {
         if (folderId) {
             formData.append("folder_id", folderId)
         }
-        console.log(formData)
 
         const url = APIServer.serverHost + APIServer.file.upload
         const resp = await axios.post(

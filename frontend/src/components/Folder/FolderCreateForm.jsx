@@ -14,11 +14,16 @@ const FolderCreateForm = ({ setShow, addFolder }) => {
             return
         }
 
-        const newFolder = await FolderService.createFolder(token, folderName)
-        addFolder(newFolder)
+        try {
+            const newFolder = await FolderService.createFolder(token, folderName)
+            addFolder(newFolder)
 
-        setFolderName("")
-        setShow(false)
+            setFolderName("")
+            setShow(false)
+        }
+        catch (e) {
+            return
+        }
     }
 
     return (
@@ -27,6 +32,8 @@ const FolderCreateForm = ({ setShow, addFolder }) => {
                 value={folderName}
                 onChange={e => setFolderName(e.target.value)}
                 type="text"
+                minLength={1}
+                maxLength={50}
                 placeholder="Название директории"
             />
             <button onClick={createFolder}>Создать</button>

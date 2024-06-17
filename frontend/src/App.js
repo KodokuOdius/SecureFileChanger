@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import './styles/App.css'
 import Rounter from './components/Router/Router';
 import { TokenContext } from './context';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText } from "@fortawesome/free-solid-svg-icons";
 
+library.add(faFolder, faFileExcel, faFilePdf, faFilePowerpoint, faFileWord, faFileText)
+
+export const FilesIcons = {
+    "pdf": faFilePdf,
+    "xlsx": faFileExcel,
+    "doc": faFileWord,
+    "docx": faFileWord,
+    "pptx": faFilePowerpoint,
+    "txt": faFileText
+}
 
 export const APIServer = {
     serverHost: "http://localhost:8080/api",

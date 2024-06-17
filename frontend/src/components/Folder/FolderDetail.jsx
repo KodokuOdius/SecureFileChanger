@@ -6,6 +6,7 @@ import FolderService from "../../api/FolderService";
 import { useAPI } from "../../hooks/useAPI";
 import Loader from "../Loader";
 import HomePanel from "../HomePanel";
+import FileService from "../../api/FileService";
 
 
 const FolderDetail = () => {
@@ -26,7 +27,11 @@ const FolderDetail = () => {
         setFiles([...files, file])
     }
 
-    const onDeleteFile = (id) => { }
+    const onDeleteFile = (id) => {
+        FileService.deleteFile(token, id)
+
+        setFiles(files.filter(file => file.file_id !== id))
+    }
 
     useEffect(() => {
         getFiles()

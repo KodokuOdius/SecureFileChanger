@@ -66,21 +66,22 @@ const Home = () => {
         <SharedFilesContext.Provider value={{ sharedFiles, setSharedFiles }}>
             <SelectionFilesContext.Provider value={{ isShowSelect, setIsShowSelect }}>
                 <div className="home">
+                    <HomePanel addFolder={addFolder} addFile={addFile} />
                     <div className="home__workspace">
-                        <HomePanel addFolder={addFolder} addFile={addFile} />
+                        <h2 className="home__title" >Главная страница</h2>
+                        <div className="home__folders">
+                            {folders === null || folders.length === 0
+                                ? <></>
+                                : <FolderList folders={folders} onDeleteFolder={onDeleteFolder} />
+                            }
+                        </div>
                         <div className="home__files">
-                            <h2>Главная страница</h2>
                             {isFilesLoading && isFoldersLoading &&
                                 <Loader msg="Идёт загрузка информации" />
                             }
                             {files === null || files.length === 0
                                 ? <h3>Нет Документов</h3>
                                 : <FileList files={files} onDeleteFile={onDeleteFile} />
-                            }
-                            <br />
-                            {folders === null || folders.length === 0
-                                ? <></>
-                                : <FolderList folders={folders} onDeleteFolder={onDeleteFolder} />
                             }
                         </div>
                     </div>

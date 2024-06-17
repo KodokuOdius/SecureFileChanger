@@ -25,28 +25,30 @@ const ShareCreateForm = ({ setShow }) => {
             return
         }
 
-        const resUrl = await UrlService.createUrl(token, sharedFiles, hourLive)
+        const fileIds = sharedFiles.map(f => f.file_id)
+        const resUrl = await UrlService.createUrl(token, fileIds, hourLive)
         setShareURL(resUrl)
     }
 
     return (
         <div className="share__form">
-            <h3>Поделиться документами</h3>
-            <p>Время жизни ссылки: </p>
-            <select
-                name="url_hour_live"
-                id="url_hour_live-select"
-                onChange={e => setHourLive(Number(e.target.value))}
-            >
-                {hourLiveValues.map(hour =>
-                    <option value={hour} key={hour} >{hour}h</option>
-                )}
-            </select>
+            <div className="hour_live">
+                <label><p>Время жизни ссылки: </p></label>
+                <select
+                    name="url_hour_live"
+                    id="url_hour_live-select"
+                    onChange={e => setHourLive(Number(e.target.value))}
+                >
+                    {hourLiveValues.map(hour =>
+                        <option value={hour} key={hour} >{hour}h</option>
+                    )}
+                </select>
+            </div>
             {shareURL !== "" &&
-                <>
+                <div className="form__result">
                     <p>Ссылка для скачивания: </p>
                     <p>{shareURL}</p>
-                </>
+                </div>
             }
             <button onClick={onCreate}>Создать ссылку</button>
             <button onClick={() => setShow(false)}>Закрыть</button>
