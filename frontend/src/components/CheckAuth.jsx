@@ -10,7 +10,7 @@ const AuthWiddleware = ({ children }) => {
 
     useEffect(() => {
         const storageToken = localStorage.getItem(APIServer.tokenName)
-        console.log("AuthWiddleware storageToken = ", storageToken)
+        // console.log("AuthWiddleware storageToken = ", storageToken)
 
         if (storageToken === null || token === null) {
             return () => { }
@@ -28,7 +28,7 @@ const AuthWiddleware = ({ children }) => {
 
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    console.log("AuthWiddleware token = ", token)
+    // console.log("AuthWiddleware token = ", token)
 
     if (token === null || token === "") {
         return <Navigate to="/login" />
