@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../../pages/Home";
 import Login from "../../pages/Login";
 import Logout from "../../pages/Logout";
@@ -10,6 +10,7 @@ import RouterNavbar from "./RouterNavbar";
 import AdminPanel from "../../pages/AdminPanel";
 import UUIDFiles from "../../pages/UUIDFiles";
 import FolderDetail from "../Folder/FolderDetail";
+import NotFound from "../../pages/NotFound";
 
 
 const Rounter = () => {
@@ -29,7 +30,6 @@ const Rounter = () => {
                         </AuthWiddleware>
                     } />
                     <Route path="/profile"
-                        redirect="/"
                         validator={Profile}
                         element={
                             <AuthWiddleware>
@@ -41,15 +41,15 @@ const Rounter = () => {
                             <AdminPanel />
                         </AuthWiddleware>
                     } />
+                    <Route path="/d/:uuid" element={
+                        <UUIDFiles />
+                    } />
                     <Route path="/" element={
                         <AuthWiddleware>
                             <Home />
                         </AuthWiddleware>
                     } />
-                    <Route path="/d/:uuid" element={
-                        <UUIDFiles />
-                    } />
-                    {/* <Route path="/*" element={<Navigate to="/" />} /> */}
+                    <Route path="/*" element={<NotFound />} />
                 </Routes>
             </div>
         </BrowserRouter >
