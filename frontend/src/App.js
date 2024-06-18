@@ -18,7 +18,7 @@ export const FilesIcons = {
 }
 
 export const APIServer = {
-    serverHost: "http://localhost:8080/api",
+    serverHost: "http://82.97.248.164:8080/api",
     tokenName: "COMPANYCLOUD_TOKEN",
     auth: {
         register: "/auth/register",
