@@ -60,11 +60,6 @@ const Register = () => {
         <div className="register__form">
             <h2 className="register__title">Форма регистрации</h2>
             <div className="register__inp">
-                {errorMsg !== "" &&
-                    <div className="error__msg">
-                        <p>{errorMsg}</p>
-                    </div>
-                }
                 {isSuccsess &&
                     <div className="succsess__msg">
                         <p>Ожидайте подтверждения Администратора</p>
@@ -100,6 +95,9 @@ const Register = () => {
                         />
                     </div>
                 </form>
+                <div className="error__msg">
+                    <p>{errorMsg}</p>
+                </div>
             </div>
             <div className="register__btns">
                 {!isSuccsess &&

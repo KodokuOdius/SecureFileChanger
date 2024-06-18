@@ -9,6 +9,7 @@ import DownloadBtn from "../Buttons/DownloadBtn";
 import CancelBtn from "../Buttons/CancelBtn";
 import SaveBtn from "../Buttons/SaveBtn";
 import ChangeBtn from "../Buttons/ChangeBtn";
+import DeleteModal from "../Modal/DeleteModal";
 
 
 // defaultFileInput = {
@@ -24,6 +25,8 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
 
     const [fileData, setFileData] = useState({ ...file, old_name: file.file_name })
     const [isEdit, setIsEdit] = useState(false)
+
+    const [isShowModal, setIsShowModal] = useState(false)
 
     const onDownloadFile = async (e) => {
         const resp = await FileService.downloadFile(token, fileData.file_id)
@@ -78,8 +81,17 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
         setFileData({ ...fileData, file_name: e.target.value })
     }
 
+    const onShowDelete = () => setIsShowModal(true)
+
     return (
         <div className="file__item" id={file.file_id}>
+            {isShowModal &&
+                <DeleteModal
+                    msg="Вы точно хотите удалить этот документ?"
+                    onClose={() => setIsShowModal(false)}
+                    onDelete={() => onDeleteFile(file.file_id)}
+                />
+            }
             <div className="item__name">
                 <div className="file__name">
                     <p className="file__icon">
@@ -123,7 +135,7 @@ const FileItem = ({ idx, file, onDeleteFile }) => {
                         ? <ChangeBtn onClick={onToggleEditFile} />
                         : <CancelBtn onClick={onToggleEditFile} />
                     }
-                    <DeleteBtn onClick={() => onDeleteFile(file.file_id)} />
+                    <DeleteBtn onClick={onShowDelete} />
                 </div>
             }
         </div>

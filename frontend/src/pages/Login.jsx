@@ -58,12 +58,6 @@ const Login = ({ setIsLoginShow }) => {
         <div className="login__form">
             <h2 className="login__title" >Форма авторизации</h2>
             <div className="login__inp">
-                {errorMsg !== ""
-                    ? <div className="error_msg">
-                        <p>{errorMsg}</p>
-                    </div>
-                    : <></>
-                }
                 <form method="post">
                     <div className="inp__item">
                         <p className="item__title">Введите email</p>
@@ -92,6 +86,9 @@ const Login = ({ setIsLoginShow }) => {
                         />
                     </div>
                 </form>
+                <div className="error__msg">
+                    <p>{errorMsg}</p>
+                </div>
             </div>
             <div className="login__btns">
                 <button onClick={autherization}>Войти</button>

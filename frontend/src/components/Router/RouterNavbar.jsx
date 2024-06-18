@@ -27,16 +27,9 @@ const RouterNavbar = ({ isLoginShow }) => {
                     <li className="links__item">
                         <Link to="/profile">Профиль</Link>
                     </li>
-                    {isLoginShow &&
-                        <li className="links__item">
-                            <Link to="/login">Войти</Link>
-                        </li>
-                    }
-                    {!isLoginShow &&
-                        <li className="links__item">
-                            <Link to="/logout">Выйти</Link>
-                        </li>
-                    }
+                    <li className="links__item">
+                        <Link to="/logout">Выйти</Link>
+                    </li>
                 </ul>
             </div>
         </nav>
