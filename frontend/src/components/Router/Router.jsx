@@ -49,7 +49,7 @@ const Rounter = () => {
                     <Route path="/d/:uuid" element={
                         <UUIDFiles />
                     } />
-                    <Route path="/*" element={<Navigate to="/" />} />
+                    {/* <Route path="/*" element={<Navigate to="/" />} /> */}
                 </Routes>
             </div>
         </BrowserRouter >
