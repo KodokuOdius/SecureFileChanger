@@ -719,6 +719,7 @@ input:checked+.user__slider:before {
     transform: translateX(25px);
 }
 
+/* UUID FILES */
 .files__uuid {
     display: flex;
     flex-direction: column;
@@ -729,6 +730,8 @@ input:checked+.user__slider:before {
     max-height: 90%;
     height: 90vh;
     width: 85%;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
 }
 
 .uuid__title {
@@ -737,7 +740,27 @@ input:checked+.user__slider:before {
     justify-content: center;
     align-items: center;
     font-size: 24pt;
+    padding-top: 5px;
 }
+
+.uuid__workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.uuid__workspace .file__list {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 5px;
+    outline: 1px solid black;
+    padding: 10px;
+    gap: 10px;
+}
+
+.uuid__workspace .file__list .file__item {
+    outline: 1px solid black;
+}
+
 
 .notfound__uuid {
     display: flex;
