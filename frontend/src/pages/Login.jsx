@@ -93,7 +93,7 @@ const Login = ({ setIsLoginShow }) => {
             <div className="login__btns">
                 <button onClick={autherization}>Войти</button>
                 <p>
-                    <Link to="/register">Зарагистрироваться</Link>
+                    <Link to="/register">Зарегистрироваться</Link>
                 </p>
             </div>
         </div>

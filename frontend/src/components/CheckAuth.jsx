@@ -12,9 +12,12 @@ const AuthWiddleware = ({ children }) => {
     useEffect(() => {
         const storageToken = localStorage.getItem(APIServer.tokenName)
         // console.log("AuthWiddleware storageToken = ", storageToken)
-
+        console.log("AuthWiddleware")
+        console.log(storageToken)
+        console.log(token)
         if (storageToken === null || token === null || token === "") {
-            return () => navigate("/login")
+            navigate("/login")
+            return () => { }
         }
 
         if (storageToken !== "" && token === "") {

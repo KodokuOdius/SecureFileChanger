@@ -101,7 +101,7 @@ const Register = () => {
             </div>
             <div className="register__btns">
                 {!isSuccsess &&
-                    <button onClick={registration}>Зарагестрироваться</button>
+                    <button onClick={registration}>Зарегистрироваться</button>
                 }
                 <p>
                     <Link to="/login">Войти</Link>
