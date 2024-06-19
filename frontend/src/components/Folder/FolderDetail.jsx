@@ -52,7 +52,7 @@ const FolderDetail = () => {
                         <h2 className="folder__back">
                             <Link to="/">
                                 <p className="back__icon">
-                                    <FontAwesomeIcon icon={faBackward} size="x" />
+                                    <FontAwesomeIcon icon={faBackward} size="1x" />
                                 </p>
                                 <span>Назад</span>
                             </Link>

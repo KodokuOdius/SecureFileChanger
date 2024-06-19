@@ -30,7 +30,6 @@ const Rounter = () => {
                         </AuthWiddleware>
                     } />
                     <Route path="/profile"
-                        validator={Profile}
                         element={
                             <AuthWiddleware>
                                 <Profile />
